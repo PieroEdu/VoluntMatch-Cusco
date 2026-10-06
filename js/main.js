@@ -4,28 +4,29 @@
  * Asignatura: Programación Web | Universidad Continental (Sede Cusco)
  * Autores: Piero Alcca, Luis Dueñas, Patrick Leguia, Alexis Rojas
  * ==============================================================================
- * Módulo encargado del ciclo de vida de la aplicación, renderizado dinámico del
- * catálogo, control de menús móviles, modales interactivos y persistencia local.
+ * Control de navegación, renderizado dinámico del catálogo,
+ * filtros reactivos, modal de postulación y persistencia con localStorage.
  */
 
-// Claves utilizadas en localStorage
-const STORAGE_KEYS = {
+// Claves del almacenamiento local (localStorage)
+const CLAVES_ALMACENAMIENTO = {
     OPORTUNIDADES: 'voluntmatch_oportunidades',
     POSTULACIONES: 'voluntmatch_postulaciones',
     USUARIO_ACTUAL: 'voluntmatch_usuario_actual'
 };
 
-/**
- * Catálogo base de causas sociales y oportunidades emblemáticas de la región Cusco.
- * Precargadas en localStorage para la sustentación y demostración del sistema.
- */
-const OPORTUNIDADES_CUSCO_INICIALES = [
+// Alias para compatibilidad
+const STORAGE_KEYS = CLAVES_ALMACENAMIENTO;
+
+// Catálogo inicial de voluntariados en Cusco
+const OPORTUNIDADES_INICIALES = [
     {
         id: "op-001",
         titulo: "Tutorías y Reforzamiento Escolar",
         ong: "Hogar Infantil Azul Wasi",
         distrito: "San Jerónimo",
         categoria: "Educación",
+        claseInsignia: "badge-educacion",
         badgeClase: "badge-educacion",
         modalidad: "Presencial",
         horario: "Sábados 9:00 AM - 1:00 PM",
@@ -42,6 +43,7 @@ const OPORTUNIDADES_CUSCO_INICIALES = [
         ong: "Asociación Verde Cusco",
         distrito: "Wanchaq",
         categoria: "Sistemas",
+        claseInsignia: "badge-sistemas",
         badgeClase: "badge-sistemas",
         modalidad: "Híbrido",
         horario: "Lunes y Miércoles 3:00 PM - 6:00 PM",
@@ -58,6 +60,7 @@ const OPORTUNIDADES_CUSCO_INICIALES = [
         ong: "Colectivo Cusco Sostenible",
         distrito: "Santiago",
         categoria: "Medio Ambiente",
+        claseInsignia: "badge-ambiente",
         badgeClase: "badge-ambiente",
         modalidad: "Presencial",
         horario: "Domingos 7:30 AM - 12:30 PM",
@@ -74,6 +77,7 @@ const OPORTUNIDADES_CUSCO_INICIALES = [
         ong: "Colectivo Cusco Solidario",
         distrito: "Cusco Centro",
         categoria: "Logística",
+        claseInsignia: "badge-logistica",
         badgeClase: "badge-logistica",
         modalidad: "Presencial",
         horario: "Viernes 2:00 PM - 6:00 PM",
@@ -90,6 +94,7 @@ const OPORTUNIDADES_CUSCO_INICIALES = [
         ong: "Asociación Yachay Wasi",
         distrito: "San Jerónimo",
         categoria: "Educación",
+        claseInsignia: "badge-educacion",
         badgeClase: "badge-educacion",
         modalidad: "Presencial",
         horario: "Martes y Jueves 4:00 PM - 6:00 PM",
@@ -106,6 +111,7 @@ const OPORTUNIDADES_CUSCO_INICIALES = [
         ong: "Red Social Cusco Activo",
         distrito: "Cusco Centro",
         categoria: "Sistemas",
+        claseInsignia: "badge-sistemas",
         badgeClase: "badge-sistemas",
         modalidad: "Virtual",
         horario: "Flexible (4 horas semanales)",
@@ -118,17 +124,19 @@ const OPORTUNIDADES_CUSCO_INICIALES = [
     }
 ];
 
+// Alias para compatibilidad
+const OPORTUNIDADES_CUSCO_INICIALES = OPORTUNIDADES_INICIALES;
+
 /**
- * Inicializa los datos en localStorage si es la primera vez que se ejecuta la app.
+ * Guarda datos iniciales en localStorage si es la primera vez que se abre la web.
  */
-function inicializarDatosStorage() {
+function inicializarDatos() {
     try {
-        if (!localStorage.getItem(STORAGE_KEYS.OPORTUNIDADES)) {
-            localStorage.setItem(STORAGE_KEYS.OPORTUNIDADES, JSON.stringify(OPORTUNIDADES_CUSCO_INICIALES));
+        if (!localStorage.getItem(CLAVES_ALMACENAMIENTO.OPORTUNIDADES)) {
+            localStorage.setItem(CLAVES_ALMACENAMIENTO.OPORTUNIDADES, JSON.stringify(OPORTUNIDADES_INICIALES));
         }
-        if (!localStorage.getItem(STORAGE_KEYS.POSTULACIONES)) {
-            // Postulaciones de prueba demostrativas
-            const postulacionesDemo = [
+        if (!localStorage.getItem(CLAVES_ALMACENAMIENTO.POSTULACIONES)) {
+            const postulacionEjemplo = [
                 {
                     id: "post-001",
                     oportunidadId: "op-001",
@@ -140,59 +148,61 @@ function inicializarDatosStorage() {
                     horasAcumuladas: 8
                 }
             ];
-            localStorage.setItem(STORAGE_KEYS.POSTULACIONES, JSON.stringify(postulacionesDemo));
+            localStorage.setItem(CLAVES_ALMACENAMIENTO.POSTULACIONES, JSON.stringify(postulacionEjemplo));
         }
-    } catch (e) {
-        console.warn("Aviso: No se pudo acceder a localStorage.", e);
+    } catch (error) {
+        console.warn("No se pudo acceder al almacenamiento local:", error);
     }
 }
 
 /**
- * Obtiene la lista completa de oportunidades desde el almacenamiento.
+ * Obtiene las oportunidades guardadas.
  * @returns {Array<Object>} Lista de oportunidades
  */
 function obtenerOportunidades() {
     try {
-        const datos = localStorage.getItem(STORAGE_KEYS.OPORTUNIDADES);
-        return datos ? JSON.parse(datos) : OPORTUNIDADES_CUSCO_INICIALES;
-    } catch (e) {
-        return OPORTUNIDADES_CUSCO_INICIALES;
+        const guardadas = localStorage.getItem(CLAVES_ALMACENAMIENTO.OPORTUNIDADES);
+        return guardadas ? JSON.parse(guardadas) : OPORTUNIDADES_INICIALES;
+    } catch (error) {
+        return OPORTUNIDADES_INICIALES;
     }
 }
 
 /**
- * Genera el elemento HTML de una tarjeta de oportunidad.
- * @param {Object} op Objeto con la información de la oportunidad
- * @returns {string} Marcado HTML seguro de la tarjeta
+ * Genera el código HTML para una tarjeta de oportunidad.
+ * @param {Object} oportunidad Datos de la oportunidad
+ * @returns {string} Código HTML
  */
-function crearMarcadoTarjeta(op) {
-    const clasePocos = op.cuposRestantes <= 2 ? 'poco' : '';
+function crearTarjetaHtml(oportunidad) {
+    const clasePocosCupos = oportunidad.cuposRestantes <= 2 ? 'poco' : '';
+    const claseInsignia = oportunidad.claseInsignia || oportunidad.badgeClase || 'badge-educacion';
+
     return `
-        <article class="tarjeta-oportunidad" data-id="${op.id}" data-categoria="${op.categoria}" data-distrito="${op.distrito}">
+        <article class="tarjeta-oportunidad" data-id="${oportunidad.id}">
             <div class="tarjeta-imagen-wrapper">
-                <span class="badge-categoria ${op.badgeClase}">${op.categoria}</span>
-                <img src="${op.imagen}" alt="${op.titulo}" loading="lazy">
+                <span class="badge-categoria ${claseInsignia}">${oportunidad.categoria}</span>
+                <img src="${oportunidad.imagen}" alt="${oportunidad.titulo}" loading="lazy">
             </div>
             <div class="tarjeta-cuerpo">
-                <h3>${op.titulo}</h3>
+                <h3>${oportunidad.titulo}</h3>
                 <div class="tarjeta-ong">
-                    <i class="bi bi-building"></i> ${op.ong}
+                    <i class="bi bi-building"></i> ${oportunidad.ong}
                 </div>
-                <p class="tarjeta-descripcion">${op.descripcion}</p>
+                <p class="tarjeta-descripcion">${oportunidad.descripcion}</p>
                 <div class="tarjeta-meta">
                     <div class="tarjeta-meta-item">
-                        <i class="bi bi-geo-alt-fill"></i> ${op.distrito}, Cusco
+                        <i class="bi bi-geo-alt-fill"></i> ${oportunidad.distrito}, Cusco
                     </div>
                     <div class="tarjeta-meta-item">
-                        <i class="bi bi-clock-fill"></i> ${op.horario}
+                        <i class="bi bi-clock-fill"></i> ${oportunidad.horario}
                     </div>
                 </div>
             </div>
             <div class="tarjeta-footer">
-                <span class="cupos-texto ${clasePocos}">
-                    <i class="bi bi-people-fill"></i> ${op.cuposRestantes} cupos libres
+                <span class="cupos-texto ${clasePocosCupos}">
+                    <i class="bi bi-people-fill"></i> ${oportunidad.cuposRestantes} cupos libres
                 </span>
-                <a href="detalle-oportunidad.html?id=${op.id}" class="btn-custom btn-primary-custom" style="padding: 0.4rem 0.9rem; font-size: 0.85rem;">
+                <a href="detalle-oportunidad.html?id=${oportunidad.id}" class="btn-custom btn-primary-custom" style="padding: 0.4rem 0.9rem; font-size: 0.85rem;">
                     Ver Detalle
                 </a>
             </div>
@@ -201,211 +211,202 @@ function crearMarcadoTarjeta(op) {
 }
 
 /**
- * Renderiza las oportunidades en el catálogo con soporte de filtrado en tiempo real.
+ * Configura los filtros y el catálogo en oportunidades.html.
  */
 function configurarCatalogo() {
-    const contenedorGrid = document.getElementById('grid-catalogo');
-    const contadorResultados = document.getElementById('contador-resultados');
-    const inputBusqueda = document.getElementById('buscar-oportunidad');
-    const checkboxesCategoria = document.querySelectorAll('.filtro-check-categoria');
-    const radioDistrito = document.querySelectorAll('.filtro-radio-distrito');
-    const btnLimpiarFiltros = document.getElementById('btn-limpiar-filtros');
+    const contenedor = document.getElementById('grid-catalogo');
+    const contador = document.getElementById('contador-resultados');
+    const campoBusqueda = document.getElementById('buscar-oportunidad');
+    const casillasCategoria = document.querySelectorAll('.filtro-check-categoria');
+    const radiosDistrito = document.querySelectorAll('.filtro-radio-distrito');
+    const botonLimpiar = document.getElementById('btn-limpiar-filtros');
 
-    if (!contenedorGrid) return;
+    if (!contenedor) return;
 
-    const oportunidades = obtenerOportunidades();
+    const listaOportunidades = obtenerOportunidades();
 
-    function renderizar() {
-        const textoBusqueda = inputBusqueda ? inputBusqueda.value.toLowerCase().trim() : '';
-        
-        // Obtener categorías seleccionadas
+    function filtrarYRenderizar() {
+        const texto = campoBusqueda ? campoBusqueda.value.toLowerCase().trim() : '';
+
+        // Categorías seleccionadas
         const categoriasSeleccionadas = [];
-        checkboxesCategoria.forEach(cb => {
-            if (cb.checked) categoriasSeleccionadas.push(cb.value);
+        casillasCategoria.forEach(casilla => {
+            if (casilla.checked) categoriasSeleccionadas.push(casilla.value);
         });
 
-        // Obtener distrito seleccionado
+        // Distrito seleccionado
         let distritoSeleccionado = 'todos';
-        radioDistrito.forEach(r => {
-            if (r.checked) distritoSeleccionado = r.value;
+        radiosDistrito.forEach(radio => {
+            if (radio.checked) distritoSeleccionado = radio.value;
         });
 
-        const filtradas = oportunidades.filter(op => {
-            // Filtro por texto (título, ong o descripción)
-            const coincideTexto = !textoBusqueda || 
-                op.titulo.toLowerCase().includes(textoBusqueda) ||
-                op.ong.toLowerCase().includes(textoBusqueda) ||
-                op.descripcion.toLowerCase().includes(textoBusqueda);
+        // Filtrado simple
+        const filtradas = listaOportunidades.filter(item => {
+            const coincideTexto = !texto ||
+                item.titulo.toLowerCase().includes(texto) ||
+                item.ong.toLowerCase().includes(texto) ||
+                item.descripcion.toLowerCase().includes(texto);
 
-            // Filtro por categoría
-            const coincideCategoria = categoriasSeleccionadas.length === 0 || 
-                categoriasSeleccionadas.includes(op.categoria);
+            const coincideCategoria = categoriasSeleccionadas.length === 0 ||
+                categoriasSeleccionadas.includes(item.categoria);
 
-            // Filtro por distrito
-            const coincideDistrito = distritoSeleccionado === 'todos' || 
-                op.distrito === distritoSeleccionado;
+            const coincideDistrito = distritoSeleccionado === 'todos' ||
+                item.distrito === distritoSeleccionado;
 
             return coincideTexto && coincideCategoria && coincideDistrito;
         });
 
+        // Renderizado
         if (filtradas.length === 0) {
-            contenedorGrid.innerHTML = `
+            contenedor.innerHTML = `
                 <div style="grid-column: 1 / -1; text-align: center; padding: 3rem 1rem; background: #fff; border-radius: 8px;">
                     <i class="bi bi-search" style="font-size: 2.5rem; color: #9E9E9E;"></i>
                     <h3 style="margin-top: 1rem; color: #424242;">No se encontraron oportunidades</h3>
-                    <p style="color: #757575;">Prueba cambiando los filtros o el término de búsqueda para ver más causas en Cusco.</p>
+                    <p style="color: #757575;">Prueba cambiando los filtros o el término de búsqueda.</p>
                 </div>
             `;
         } else {
-            contenedorGrid.innerHTML = filtradas.map(crearMarcadoTarjeta).join('');
+            contenedor.innerHTML = filtradas.map(crearTarjetaHtml).join('');
         }
 
-        if (contadorResultados) {
-            contadorResultados.textContent = `${filtradas.length} oportunidades activas`;
+        if (contador) {
+            contador.textContent = `${filtradas.length} oportunidades activas`;
         }
     }
 
-    // Escuchadores de eventos para interactividad
-    if (inputBusqueda) inputBusqueda.addEventListener('input', renderizar);
-    checkboxesCategoria.forEach(cb => cb.addEventListener('change', renderizar));
-    radioDistrito.forEach(r => r.addEventListener('change', renderizar));
+    if (campoBusqueda) campoBusqueda.addEventListener('input', filtrarYRenderizar);
+    casillasCategoria.forEach(casilla => casilla.addEventListener('change', filtrarYRenderizar));
+    radiosDistrito.forEach(radio => radio.addEventListener('change', filtrarYRenderizar));
 
-    if (btnLimpiarFiltros) {
-        btnLimpiarFiltros.addEventListener('click', (e) => {
-            e.preventDefault();
-            if (inputBusqueda) inputBusqueda.value = '';
-            checkboxesCategoria.forEach(cb => cb.checked = false);
+    if (botonLimpiar) {
+        botonLimpiar.addEventListener('click', (evento) => {
+            evento.preventDefault();
+            if (campoBusqueda) campoBusqueda.value = '';
+            casillasCategoria.forEach(casilla => casilla.checked = false);
             const radioTodos = document.querySelector('input[name="distrito"][value="todos"]');
             if (radioTodos) radioTodos.checked = true;
-            renderizar();
+            filtrarYRenderizar();
         });
     }
 
-    renderizar();
+    filtrarYRenderizar();
 }
 
 /**
- * Configura la sección de oportunidades destacadas en la Landing Page (index.html).
+ * Muestra las oportunidades destacadas en la página de inicio (index.html).
  */
-function configurarDestacadasIndex() {
+function configurarDestacadasInicio() {
     const contenedor = document.getElementById('grid-destacadas-index');
     if (!contenedor) return;
 
-    const oportunidades = obtenerOportunidades();
-    const destacadas = oportunidades.filter(op => op.destacada).slice(0, 3);
-    contenedor.innerHTML = destacadas.map(crearMarcadoTarjeta).join('');
+    const lista = obtenerOportunidades();
+    const destacadas = lista.filter(item => item.destacada).slice(0, 3);
+    contenedor.innerHTML = destacadas.map(crearTarjetaHtml).join('');
 }
 
 /**
- * Carga la información de la oportunidad seleccionada en la vista de detalle.
+ * Carga los datos de la oportunidad en detalle-oportunidad.html.
  */
-function configurarVistaDetalle() {
-    const detalleContenedor = document.getElementById('contenedor-detalle-oportunidad');
-    if (!detalleContenedor) return;
+function configurarDetalleOportunidad() {
+    const contenedor = document.getElementById('contenedor-detalle-oportunidad');
+    if (!contenedor) return;
 
-    const urlParams = new URLSearchParams(window.location.search);
-    const oportunidadId = urlParams.get('id') || 'op-001';
+    const parametros = new URLSearchParams(window.location.search);
+    const identificador = parametros.get('id') || 'op-001';
 
-    const oportunidades = obtenerOportunidades();
-    const oportunidad = oportunidades.find(op => op.id === oportunidadId) || oportunidades[0];
+    const lista = obtenerOportunidades();
+    const seleccionada = lista.find(item => item.id === identificador) || lista[0];
 
-    // Llenar campos de la interfaz
-    document.getElementById('detalle-titulo').textContent = oportunidad.titulo;
-    document.getElementById('detalle-ong').textContent = oportunidad.ong;
-    document.getElementById('detalle-distrito').textContent = `${oportunidad.distrito}, Cusco`;
-    document.getElementById('detalle-categoria').textContent = oportunidad.categoria;
-    document.getElementById('detalle-categoria').className = `badge-categoria ${oportunidad.badgeClase}`;
-    document.getElementById('detalle-descripcion').textContent = oportunidad.descripcion;
-    document.getElementById('detalle-horario').textContent = oportunidad.horario;
-    document.getElementById('detalle-modalidad').textContent = oportunidad.modalidad;
-    document.getElementById('detalle-cupos').textContent = `${oportunidad.cuposRestantes} cupos de ${oportunidad.cupos} totales`;
+    // Asignar textos
+    document.getElementById('detalle-titulo').textContent = seleccionada.titulo;
+    document.getElementById('detalle-ong').textContent = seleccionada.ong;
+    document.getElementById('detalle-distrito').textContent = `${seleccionada.distrito}, Cusco`;
 
-    const imgElement = document.getElementById('detalle-imagen');
-    if (imgElement) imgElement.src = oportunidad.imagen;
+    const elementoCategoria = document.getElementById('detalle-categoria');
+    elementoCategoria.textContent = seleccionada.categoria;
+    elementoCategoria.className = `badge-categoria ${seleccionada.claseInsignia || seleccionada.badgeClase}`;
 
-    // Lista de habilidades
-    const ulHabilidades = document.getElementById('detalle-habilidades-lista');
-    if (ulHabilidades) {
-        ulHabilidades.innerHTML = oportunidad.habilidades
-            .map(h => `<li class="item-habilidad"><i class="bi bi-check-circle-fill" style="color: var(--color-primary); margin-right: 4px;"></i>${h}</li>`)
+    document.getElementById('detalle-descripcion').textContent = seleccionada.descripcion;
+    document.getElementById('detalle-horario').textContent = seleccionada.horario;
+    document.getElementById('detalle-modalidad').textContent = seleccionada.modalidad;
+    document.getElementById('detalle-cupos').textContent = `${seleccionada.cuposRestantes} cupos de ${seleccionada.cupos} totales`;
+
+    const imagen = document.getElementById('detalle-imagen');
+    if (imagen) imagen.src = seleccionada.imagen;
+
+    // Habilidades requeridas
+    const listaHabilidades = document.getElementById('detalle-habilidades-lista');
+    if (listaHabilidades) {
+        listaHabilidades.innerHTML = seleccionada.habilidades
+            .map(habilidad => `<li class="item-habilidad"><i class="bi bi-check-circle-fill" style="color: var(--color-primario, #2E7D32); margin-right: 4px;"></i>${habilidad}</li>`)
             .join('');
     }
 
-    // Configurar modal de postulación
-    const btnAbrirModal = document.getElementById('btn-abrir-postulacion');
-    const modalPostulacion = document.getElementById('modal-postulacion');
-    const btnCerrarModal = document.getElementById('btn-cerrar-modal');
-    const formPostular = document.getElementById('form-postulacion-rapida');
+    // Modal de postulación
+    const botonAbrir = document.getElementById('btn-abrir-postulacion');
+    const modal = document.getElementById('modal-postulacion');
+    const botonCerrar = document.getElementById('btn-cerrar-modal');
+    const formulario = document.getElementById('form-postulacion-rapida');
 
-    if (btnAbrirModal && modalPostulacion) {
-        btnAbrirModal.addEventListener('click', () => {
-            modalPostulacion.classList.add('activo');
+    if (botonAbrir && modal) {
+        botonAbrir.addEventListener('click', () => modal.classList.add('activo'));
+    }
+    if (botonCerrar && modal) {
+        botonCerrar.addEventListener('click', () => modal.classList.remove('activo'));
+    }
+    if (modal) {
+        modal.addEventListener('click', (evento) => {
+            if (evento.target === modal) modal.classList.remove('activo');
         });
     }
 
-    if (btnCerrarModal && modalPostulacion) {
-        btnCerrarModal.addEventListener('click', () => {
-            modalPostulacion.classList.remove('activo');
-        });
-    }
+    if (formulario) {
+        formulario.addEventListener('submit', (evento) => {
+            evento.preventDefault();
+            const campoNombre = document.getElementById('postulante-nombre');
+            const campoCorreo = document.getElementById('postulante-correo');
+            const nombre = campoNombre ? campoNombre.value.trim() : 'Estudiante';
+            const correo = campoCorreo ? campoCorreo.value.trim() : '';
 
-    // Cerrar al hacer click fuera
-    if (modalPostulacion) {
-        modalPostulacion.addEventListener('click', (e) => {
-            if (e.target === modalPostulacion) {
-                modalPostulacion.classList.remove('activo');
-            }
-        });
-    }
-
-    // Confirmación de postulación
-    if (formPostular) {
-        formPostular.addEventListener('submit', (e) => {
-            e.preventDefault();
-            const inputNombre = document.getElementById('postulante-nombre');
-            const inputCorreo = document.getElementById('postulante-correo');
-            const nombre = inputNombre ? inputNombre.value.trim() : 'Estudiante';
-            const correo = inputCorreo ? inputCorreo.value.trim() : '';
-
-            // Guardar postulación en localStorage
+            // Guardar postulación
             try {
-                let postulaciones = JSON.parse(localStorage.getItem(STORAGE_KEYS.POSTULACIONES) || '[]');
+                let postulaciones = JSON.parse(localStorage.getItem(CLAVES_ALMACENAMIENTO.POSTULACIONES) || '[]');
                 postulaciones.push({
                     id: 'post-' + Date.now(),
-                    oportunidadId: oportunidad.id,
-                    titulo: oportunidad.titulo,
-                    ong: oportunidad.ong,
+                    oportunidadId: seleccionada.id,
+                    titulo: seleccionada.titulo,
+                    ong: seleccionada.ong,
                     fecha: new Date().toISOString().split('T')[0],
                     estado: 'Pendiente',
                     estudiante: nombre,
                     correo: correo,
                     horasAcumuladas: 0
                 });
-                localStorage.setItem(STORAGE_KEYS.POSTULACIONES, JSON.stringify(postulaciones));
-            } catch (err) {
-                console.error("Error al registrar postulación:", err);
+                localStorage.setItem(CLAVES_ALMACENAMIENTO.POSTULACIONES, JSON.stringify(postulaciones));
+            } catch (error) {
+                console.error("Error al registrar postulación:", error);
             }
 
-            modalPostulacion.classList.remove('activo');
-            alert(`¡Felicitaciones ${nombre}!\nTu postulación a "${oportunidad.titulo}" con ${oportunidad.ong} fue enviada con éxito.\nPuedes seguir su estado en tu Panel de Voluntario.`);
+            modal.classList.remove('activo');
+            alert(`¡Felicitaciones ${nombre}!\nTu postulación a "${seleccionada.titulo}" fue registrada exitosamente.`);
             window.location.href = 'dashboard-voluntario.html';
         });
     }
 }
 
 /**
- * Control del menú de navegación móvil (Menú Hamburguesa).
+ * Control del menú de navegación para dispositivos móviles.
  */
 function configurarMenuMovil() {
-    const btnHamburguesa = document.querySelector('.boton-menu-movil');
-    const navMenu = document.querySelector('.nav-principal');
+    const botonMenu = document.querySelector('.boton-menu-movil');
+    const menuNavegacion = document.querySelector('.nav-principal');
 
-    if (btnHamburguesa && navMenu) {
-        btnHamburguesa.addEventListener('click', () => {
-            navMenu.classList.toggle('activo');
-            const icono = btnHamburguesa.querySelector('i');
+    if (botonMenu && menuNavegacion) {
+        botonMenu.addEventListener('click', () => {
+            menuNavegacion.classList.toggle('activo');
+            const icono = botonMenu.querySelector('i');
             if (icono) {
-                if (navMenu.classList.contains('activo')) {
+                if (menuNavegacion.classList.contains('activo')) {
                     icono.classList.replace('bi-list', 'bi-x-lg');
                 } else {
                     icono.classList.replace('bi-x-lg', 'bi-list');
@@ -415,11 +416,11 @@ function configurarMenuMovil() {
     }
 }
 
-// INICIALIZACIÓN GENERAL CUANDO EL DOM ESTÁ LISTO
+// Inicialización general al cargar el DOM
 document.addEventListener('DOMContentLoaded', () => {
-    inicializarDatosStorage();
+    inicializarDatos();
     configurarMenuMovil();
-    configurarDestacadasIndex();
+    configurarDestacadasInicio();
     configurarCatalogo();
-    configurarVistaDetalle();
+    configurarDetalleOportunidad();
 });

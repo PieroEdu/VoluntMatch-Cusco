@@ -21,7 +21,7 @@
             <div class="logo-sitio">
                 <a href="index.html" class="d-flex align-items-center text-decoration-none">
                     <i class="bi bi-people-fill me-2"></i>
-                    <span style="color: var(--color-primary); font-weight: 800;">VoluntMatch</span>
+                    <span style="color: var(--color-primario); font-weight: 800;">VoluntMatch</span>
                     <span class="logo-tag">Cusco</span>
                 </a>
             </div>
@@ -296,14 +296,15 @@
     <!-- Script Principal -->
     <script src="js/main.js"></script>
     <script>
-        // Lógica del Panel de ONG: Aceptar/Rechazar postulantes y Crear Convocatoria
+        // Panel de Gestión de la ONG: Aceptar/Rechazar postulantes y crear convocatorias
         document.addEventListener('DOMContentLoaded', () => {
-            const tbody = document.getElementById('tabla-postulantes-ong-body');
-            const numPostulantes = document.getElementById('num-postulantes-recibidos');
-            const numMatches = document.getElementById('num-matches-confirmados');
+            const cuerpoTabla = document.getElementById('tabla-postulantes-ong-body');
+            const contadorPostulantes = document.getElementById('num-postulantes-recibidos');
+            const contadorMatches = document.getElementById('num-matches-confirmados');
+            const claveOportunidades = (typeof CLAVES_ALMACENAMIENTO !== 'undefined') ? CLAVES_ALMACENAMIENTO.OPORTUNIDADES : 'voluntmatch_oportunidades';
 
-            // Postulantes demostrativos iniciales
-            let postulantes = [
+            // Postulantes de ejemplo
+            let listaPostulantes = [
                 {
                     id: "post-demo-1",
                     estudiante: "Piero Edu Alcca Moron",
@@ -331,16 +332,18 @@
             ];
 
             function renderizarPostulantes() {
-                if (numPostulantes) numPostulantes.textContent = postulantes.length;
-                if (numMatches) numMatches.textContent = postulantes.filter(p => p.estado === 'Aceptado').length;
+                if (contadorPostulantes) contadorPostulantes.textContent = listaPostulantes.length;
+                if (contadorMatches) contadorMatches.textContent = listaPostulantes.filter(p => p.estado === 'Aceptado').length;
 
-                tbody.innerHTML = postulantes.map(p => {
-                    const badgeClase = p.estado === 'Aceptado' ? 'bg-success' : 'bg-warning text-dark';
-                    const botonesAccion = p.estado === 'Pendiente' ? `
-                        <button type="button" class="btn btn-success btn-sm btn-aceptar-match me-1" data-id="${p.id}">
+                if (!cuerpoTabla) return;
+
+                cuerpoTabla.innerHTML = listaPostulantes.map(postulante => {
+                    const claseInsignia = postulante.estado === 'Aceptado' ? 'bg-success' : 'bg-warning text-dark';
+                    const botonesAccion = postulante.estado === 'Pendiente' ? `
+                        <button type="button" class="btn btn-success btn-sm btn-aceptar-match me-1" data-id="${postulante.id}">
                             <i class="bi bi-check-lg"></i> Aceptar Match
                         </button>
-                        <button type="button" class="btn btn-outline-danger btn-sm btn-rechazar-match" data-id="${p.id}">
+                        <button type="button" class="btn btn-outline-danger btn-sm btn-rechazar-match" data-id="${postulante.id}">
                             <i class="bi bi-x-lg"></i>
                         </button>
                     ` : `
@@ -349,36 +352,35 @@
 
                     return `
                         <tr>
-                            <td>
-                                <strong>${p.estudiante}</strong>
-                            </td>
-                            <td><span class="small text-muted">${p.carrera}</span></td>
-                            <td>${p.convocatoria}</td>
-                            <td>${p.fecha}</td>
-                            <td><span class="badge ${badgeClase}">${p.estado}</span></td>
+                            <td><strong>${postulante.estudiante}</strong></td>
+                            <td><span class="small text-muted">${postulante.carrera}</span></td>
+                            <td>${postulante.convocatoria}</td>
+                            <td>${postulante.fecha}</td>
+                            <td><span class="badge ${claseInsignia}">${postulante.estado}</span></td>
                             <td class="text-end">${botonesAccion}</td>
                         </tr>
                     `;
                 }).join('');
 
-                // Asignar eventos de aceptación de match
-                document.querySelectorAll('.btn-aceptar-match').forEach(b => {
-                    b.addEventListener('click', (e) => {
-                        const id = e.currentTarget.getAttribute('data-id');
-                        const target = postulantes.find(item => item.id === id);
-                        if (target) {
-                            target.estado = 'Aceptado';
-                            alert(`¡Match Aceptado!\nHas confirmado a ${target.estudiante} para la causa "${target.convocatoria}".`);
+                // Eventos de aceptación
+                document.querySelectorAll('.btn-aceptar-match').forEach(boton => {
+                    boton.addEventListener('click', (evento) => {
+                        const identificador = evento.currentTarget.getAttribute('data-id');
+                        const seleccionado = listaPostulantes.find(item => item.id === identificador);
+                        if (seleccionado) {
+                            seleccionado.estado = 'Aceptado';
+                            alert(`¡Match Aceptado!\nHas confirmado a ${seleccionado.estudiante} para la causa "${seleccionado.convocatoria}".`);
                             renderizarPostulantes();
                         }
                     });
                 });
 
-                document.querySelectorAll('.btn-rechazar-match').forEach(b => {
-                    b.addEventListener('click', (e) => {
-                        const id = e.currentTarget.getAttribute('data-id');
+                // Eventos de rechazo
+                document.querySelectorAll('.btn-rechazar-match').forEach(boton => {
+                    boton.addEventListener('click', (evento) => {
+                        const identificador = evento.currentTarget.getAttribute('data-id');
                         if (confirm('¿Deseas desestimar esta postulación?')) {
-                            postulantes = postulantes.filter(item => item.id !== id);
+                            listaPostulantes = listaPostulantes.filter(item => item.id !== identificador);
                             renderizarPostulantes();
                         }
                     });
@@ -389,56 +391,56 @@
 
             // Modal para Crear Convocatoria
             const modal = document.getElementById('modal-crear-convocatoria');
-            const btnAbrir = document.getElementById('btn-abrir-crear-convocatoria');
-            const btnCerrar = document.getElementById('btn-cerrar-modal-convocatoria');
-            const formCrear = document.getElementById('form-crear-convocatoria');
+            const botonAbrir = document.getElementById('btn-abrir-crear-convocatoria');
+            const botonCerrar = document.getElementById('btn-cerrar-modal-convocatoria');
+            const formulario = document.getElementById('form-crear-convocatoria');
 
-            if (btnAbrir && modal) {
-                btnAbrir.addEventListener('click', () => modal.classList.add('activo'));
+            if (botonAbrir && modal) {
+                botonAbrir.addEventListener('click', () => modal.classList.add('activo'));
             }
-            if (btnCerrar && modal) {
-                btnCerrar.addEventListener('click', () => modal.classList.remove('activo'));
+            if (botonCerrar && modal) {
+                botonCerrar.addEventListener('click', () => modal.classList.remove('activo'));
             }
 
-            if (formCrear) {
-                formCrear.addEventListener('submit', (e) => {
-                    e.preventDefault();
+            if (formulario) {
+                formulario.addEventListener('submit', (evento) => {
+                    evento.preventDefault();
                     const titulo = document.getElementById('conv-titulo').value.trim();
                     const categoria = document.getElementById('conv-categoria').value;
                     const distrito = document.getElementById('conv-distrito').value;
                     const cupos = parseInt(document.getElementById('conv-cupos').value) || 3;
                     const horario = document.getElementById('conv-horario').value.trim() || 'Fines de semana';
-                    const desc = document.getElementById('conv-descripcion').value.trim();
+                    const descripcion = document.getElementById('conv-descripcion').value.trim();
 
-                    // Guardar nueva oportunidad en localStorage
-                    const nuevaOp = {
+                    const nuevaOportunidad = {
                         id: 'op-' + Date.now(),
                         titulo: titulo,
                         ong: 'Hogar Infantil Azul Wasi',
                         distrito: distrito,
                         categoria: categoria,
+                        claseInsignia: categoria === 'Educación' ? 'badge-educacion' : (categoria === 'Sistemas' ? 'badge-sistemas' : 'badge-logistica'),
                         badgeClase: categoria === 'Educación' ? 'badge-educacion' : (categoria === 'Sistemas' ? 'badge-sistemas' : 'badge-logistica'),
                         modalidad: 'Presencial',
                         horario: horario,
                         cupos: cupos,
                         cuposRestantes: cupos,
                         imagen: 'https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?auto=format&fit=crop&w=600&q=80',
-                        descripcion: desc,
+                        descripcion: descripcion,
                         habilidades: ['Compromiso', 'Proactividad', 'Trabajo en equipo'],
                         destacada: true
                     };
 
                     try {
-                        let oportunidades = JSON.parse(localStorage.getItem(STORAGE_KEYS.OPORTUNIDADES) || '[]');
-                        oportunidades.unshift(nuevaOp);
-                        localStorage.setItem(STORAGE_KEYS.OPORTUNIDADES, JSON.stringify(oportunidades));
-                    } catch (err) {
-                        console.error('Error al guardar convocatoria:', err);
+                        let oportunidades = JSON.parse(localStorage.getItem(claveOportunidades) || '[]');
+                        oportunidades.unshift(nuevaOportunidad);
+                        localStorage.setItem(claveOportunidades, JSON.stringify(oportunidades));
+                    } catch (error) {
+                        console.error('Error al guardar convocatoria:', error);
                     }
 
                     modal.classList.remove('activo');
-                    formCrear.reset();
-                    alert(`¡Convocatoria "${titulo}" publicada con éxito!\nAhora es visible para todos los estudiantes de Cusco en el catálogo.`);
+                    formulario.reset();
+                    alert(`¡Convocatoria "${titulo}" publicada con éxito!\nAhora es visible en el catálogo de Cusco.`);
                 });
             }
         });

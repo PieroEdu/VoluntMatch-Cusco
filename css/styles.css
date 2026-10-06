@@ -5,47 +5,71 @@
    ========================================================================== */
 
 /* --------------------------------------------------------------------------
-   1. IMPORTACIÓN DE TIPOGRAFÍAS Y VARIABLES GLOBALES
+   1. TIPOGRAFÍAS Y VARIABLES GLOBALES (EN ESPAÑOL)
    -------------------------------------------------------------------------- */
 @import url('https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300..800;1,300..800&family=Poppins:wght@400;500;600;700;800&display=swap');
 
 :root {
-    /* Paleta Institucional (Sección 7.3.1 del informe) */
-    --color-primary: #2E7D32;         /* Verde institucional principal */
-    --color-primary-dark: #1B5E20;    /* Verde oscuro para hovers y bordes */
-    --color-primary-light: #E8F5E9;   /* Fondo tenue para insignias y selecciones */
-    --color-accent: #FF8F00;          /* Acento cálido para alertas de cupos */
-    --color-accent-hover: #E65100;
+    /* Paleta de Colores en Español */
+    --color-primario: #2E7D32;         /* Verde institucional principal */
+    --color-primario-oscuro: #1B5E20;  /* Verde oscuro para interacción y bordes */
+    --color-primario-claro: #E8F5E9;   /* Fondo tenue para insignias y selecciones */
+    --color-acento: #FF8F00;          /* Acento naranja */
+    --color-acento-hover: #E65100;
     
     /* Escala de Grises y Fondos */
-    --color-bg-body: #F4F6F8;        /* Tono gris claro para el fondo general */
-    --color-bg-card: #FFFFFF;        /* Blanco puro para tarjetas y formularios */
-    --color-text-main: #212529;      /* Texto de alto contraste */
-    --color-text-muted: #6C757D;     /* Texto descriptivo secundario */
-    --color-border: #E0E0E0;         /* Líneas divisorias sutiles */
+    --color-fondo-cuerpo: #F4F6F8;    /* Fondo general */
+    --color-fondo-tarjeta: #FFFFFF;   /* Fondo de tarjetas y formularios */
+    --color-texto-principal: #212529; /* Texto principal oscuro */
+    --color-texto-secundario: #6C757D;/* Texto secundario */
+    --color-borde: #E0E0E0;           /* Bordes sutiles */
     
     /* Estados y Alertas */
-    --color-success: #2E7D32;
-    --color-warning: #F57C00;
-    --color-danger: #D32F2F;
+    --color-exito: #2E7D32;
+    --color-advertencia: #F57C00;
+    --color-peligro: #D32F2F;
     --color-info: #0288D1;
 
     /* Tipografías */
-    --font-heading: 'Poppins', sans-serif;
-    --font-body: 'Open Sans', Arial, sans-serif;
+    --fuente-titulos: 'Poppins', sans-serif;
+    --fuente-cuerpo: 'Open Sans', Arial, sans-serif;
 
-    /* Sombras y Elevaciones */
-    --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.05);
-    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.08);
-    --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.12);
-    --transition: all 0.25s ease-in-out;
-    --radius-sm: 6px;
-    --radius-md: 10px;
-    --radius-lg: 16px;
+    /* Sombras y Medidas */
+    --sombra-chica: 0 2px 4px rgba(0, 0, 0, 0.05);
+    --sombra-media: 0 4px 12px rgba(0, 0, 0, 0.08);
+    --sombra-grande: 0 8px 24px rgba(0, 0, 0, 0.12);
+    --transicion: all 0.25s ease-in-out;
+    --radio-chico: 6px;
+    --radio-medio: 10px;
+    --radio-grande: 16px;
+
+    /* Alias para compatibilidad */
+    --color-primary: var(--color-primario);
+    --color-primary-dark: var(--color-primario-oscuro);
+    --color-primary-light: var(--color-primario-claro);
+    --color-accent: var(--color-acento);
+    --color-accent-hover: var(--color-acento-hover);
+    --color-bg-body: var(--color-fondo-cuerpo);
+    --color-bg-card: var(--color-fondo-tarjeta);
+    --color-text-main: var(--color-texto-principal);
+    --color-text-muted: var(--color-texto-secundario);
+    --color-border: var(--color-borde);
+    --color-success: var(--color-exito);
+    --color-warning: var(--color-advertencia);
+    --color-danger: var(--color-peligro);
+    --font-heading: var(--fuente-titulos);
+    --font-body: var(--fuente-cuerpo);
+    --shadow-sm: var(--sombra-chica);
+    --shadow-md: var(--sombra-media);
+    --shadow-lg: var(--sombra-grande);
+    --transition: var(--transicion);
+    --radius-sm: var(--radio-chico);
+    --radius-md: var(--radio-medio);
+    --radius-lg: var(--radio-grande);
 }
 
 /* --------------------------------------------------------------------------
-   2. REINICIO Y ESTILOS BASE (BOX MODEL)
+   2. REINICIO Y ESTILOS BASE
    -------------------------------------------------------------------------- */
 *, *::before, *::after {
     box-sizing: border-box;
@@ -58,31 +82,31 @@ html {
 }
 
 body {
-    font-family: var(--font-body);
+    font-family: var(--fuente-cuerpo);
     font-size: 16px;
     line-height: 1.6;
-    color: var(--text-main, #212529);
-    background-color: var(--color-bg-body);
+    color: var(--color-texto-principal);
+    background-color: var(--color-fondo-cuerpo);
     display: flex;
     flex-direction: column;
     min-height: 100vh;
 }
 
 h1, h2, h3, h4, h5, h6 {
-    font-family: var(--font-heading);
+    font-family: var(--fuente-titulos);
     color: #1A202C;
     font-weight: 700;
     line-height: 1.3;
 }
 
 a {
-    color: var(--color-primary);
+    color: var(--color-primario);
     text-decoration: none;
-    transition: var(--transition);
+    transition: var(--transicion);
 }
 
 a:hover {
-    color: var(--color-primary-dark);
+    color: var(--color-primario-oscuro);
 }
 
 img {
@@ -92,15 +116,15 @@ img {
 }
 
 /* --------------------------------------------------------------------------
-   3. CABECERA Y NAVEGACIÓN PRINCIPAL (FLEXBOX)
+   3. CABECERA Y NAVEGACIÓN
    -------------------------------------------------------------------------- */
 .header-principal {
     background-color: #FFFFFF;
-    border-bottom: 1px solid var(--color-border);
+    border-bottom: 1px solid var(--color-borde);
     position: sticky;
     top: 0;
     z-index: 1000;
-    box-shadow: var(--shadow-sm);
+    box-shadow: var(--sombra-chica);
 }
 
 .header-container {
@@ -116,21 +140,21 @@ img {
     display: flex;
     align-items: center;
     gap: 0.6rem;
-    font-family: var(--font-heading);
+    font-family: var(--fuente-titulos);
     font-size: 1.4rem;
     font-weight: 800;
-    color: var(--color-primary);
+    color: var(--color-primario);
 }
 
 .logo-sitio i {
     font-size: 1.8rem;
-    color: var(--color-primary);
+    color: var(--color-primario);
 }
 
 .logo-sitio .logo-tag {
     font-size: 0.75rem;
-    background: var(--color-primary-light);
-    color: var(--color-primary-dark);
+    background: var(--color-primario-claro);
+    color: var(--color-primario-oscuro);
     padding: 2px 8px;
     border-radius: 12px;
     font-weight: 600;
@@ -149,7 +173,7 @@ img {
     font-weight: 500;
     font-size: 0.95rem;
     padding: 0.4rem 0.6rem;
-    border-radius: var(--radius-sm);
+    border-radius: var(--radio-chico);
     display: flex;
     align-items: center;
     gap: 0.35rem;
@@ -157,8 +181,8 @@ img {
 
 .nav-principal a:hover,
 .nav-principal a.activo {
-    color: var(--color-primary);
-    background-color: var(--color-primary-light);
+    color: var(--color-primario);
+    background-color: var(--color-primario-claro);
     font-weight: 600;
 }
 
@@ -168,7 +192,6 @@ img {
     gap: 0.75rem;
 }
 
-/* Botón Hamburguesa Móvil */
 .boton-menu-movil {
     display: none;
     background: none;
@@ -180,7 +203,7 @@ img {
 }
 
 /* --------------------------------------------------------------------------
-   4. BOTONES Y COMPONENTES REUTILIZABLES
+   4. BOTONES E INSIGNIAS (BADGES)
    -------------------------------------------------------------------------- */
 .btn-custom {
     display: inline-flex;
@@ -188,44 +211,44 @@ img {
     justify-content: center;
     gap: 0.5rem;
     padding: 0.6rem 1.25rem;
-    font-family: var(--font-heading);
+    font-family: var(--fuente-titulos);
     font-size: 0.95rem;
     font-weight: 600;
-    border-radius: var(--radius-sm);
+    border-radius: var(--radio-chico);
     cursor: pointer;
     border: 2px solid transparent;
-    transition: var(--transition);
+    transition: var(--transicion);
     text-align: center;
 }
 
 .btn-primary-custom {
-    background-color: var(--color-primary);
+    background-color: var(--color-primario);
     color: #FFFFFF !important;
 }
 
 .btn-primary-custom:hover {
-    background-color: var(--color-primary-dark);
+    background-color: var(--color-primario-oscuro);
     box-shadow: 0 4px 10px rgba(46, 125, 50, 0.3);
 }
 
 .btn-outline-custom {
     background-color: transparent;
-    border-color: var(--color-primary);
-    color: var(--color-primary) !important;
+    border-color: var(--color-primario);
+    color: var(--color-primario) !important;
 }
 
 .btn-outline-custom:hover {
-    background-color: var(--color-primary);
+    background-color: var(--color-primario);
     color: #FFFFFF !important;
 }
 
 .btn-accent-custom {
-    background-color: var(--color-accent);
+    background-color: var(--color-acento);
     color: #FFFFFF !important;
 }
 
 .btn-accent-custom:hover {
-    background-color: var(--color-accent-hover);
+    background-color: var(--color-acento-hover);
 }
 
 .badge-categoria {
@@ -282,12 +305,11 @@ img {
     max-width: 580px;
 }
 
-/* Buscador Rápido del Hero */
 .hero-search-box {
     background-color: #FFFFFF;
     padding: 0.75rem;
-    border-radius: var(--radius-md);
-    box-shadow: var(--shadow-lg);
+    border-radius: var(--radio-medio);
+    box-shadow: var(--sombra-grande);
     display: grid;
     grid-template-columns: 1fr 1fr auto;
     gap: 0.75rem;
@@ -300,12 +322,12 @@ img {
     gap: 0.5rem;
     padding: 0.5rem 0.75rem;
     background-color: #F8FAFC;
-    border-radius: var(--radius-sm);
-    border: 1px solid var(--color-border);
+    border-radius: var(--radio-chico);
+    border: 1px solid var(--color-borde);
 }
 
 .hero-search-box .input-group-custom i {
-    color: var(--color-primary);
+    color: var(--color-primario);
     font-size: 1.1rem;
 }
 
@@ -316,16 +338,16 @@ img {
     width: 100%;
     outline: none;
     font-size: 0.9rem;
-    font-family: var(--font-body);
+    font-family: var(--fuente-cuerpo);
 }
 
 .hero-banner-card {
     background: rgba(255, 255, 255, 0.1);
     backdrop-filter: blur(10px);
     border: 1px solid rgba(255, 255, 255, 0.2);
-    border-radius: var(--radius-lg);
+    border-radius: var(--radio-grande);
     padding: 2rem;
-    box-shadow: var(--shadow-lg);
+    box-shadow: var(--sombra-grande);
 }
 
 .hero-stat-grid {
@@ -338,11 +360,11 @@ img {
     text-align: center;
     background: rgba(255, 255, 255, 0.15);
     padding: 1.25rem 1rem;
-    border-radius: var(--radius-md);
+    border-radius: var(--radio-medio);
 }
 
 .stat-number {
-    font-family: var(--font-heading);
+    font-family: var(--fuente-titulos);
     font-size: 2.2rem;
     font-weight: 800;
     color: #FFD54F;
@@ -357,12 +379,12 @@ img {
 }
 
 /* --------------------------------------------------------------------------
-   6. SECCIÓN DE ESTADÍSTICAS E IMPACTO SOCIAL (MÉTRICAS 6.6)
+   6. SECCIÓN DE MÉTRICAS E IMPACTO
    -------------------------------------------------------------------------- */
 .seccion-metricas {
     background-color: #FFFFFF;
     padding: 3rem 1.5rem;
-    border-bottom: 1px solid var(--color-border);
+    border-bottom: 1px solid var(--color-borde);
 }
 
 .container-ancho {
@@ -379,8 +401,8 @@ img {
 
 .metrica-card {
     padding: 1rem;
-    border-radius: var(--radius-md);
-    transition: var(--transition);
+    border-radius: var(--radio-medio);
+    transition: var(--transicion);
 }
 
 .metrica-card:hover {
@@ -392,8 +414,8 @@ img {
     height: 60px;
     margin: 0 auto 1rem auto;
     border-radius: 50%;
-    background-color: var(--color-primary-light);
-    color: var(--color-primary);
+    background-color: var(--color-primario-claro);
+    color: var(--color-primario);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -402,17 +424,17 @@ img {
 
 .metrica-card h3 {
     font-size: 1.75rem;
-    color: var(--color-primary);
+    color: var(--color-primario);
     margin-bottom: 0.25rem;
 }
 
 .metrica-card p {
     font-size: 0.9rem;
-    color: var(--color-text-muted);
+    color: var(--color-texto-secundario);
 }
 
 /* --------------------------------------------------------------------------
-   7. SECCIÓN DE OPORTUNIDADES (CSS GRID - SECCIÓN 7.3.2)
+   7. CATÁLOGO Y FILTROS LATERALES
    -------------------------------------------------------------------------- */
 .seccion-catalogo {
     padding: 3.5rem 1.5rem;
@@ -431,19 +453,18 @@ img {
 }
 
 .encabezado-seccion p {
-    color: var(--color-text-muted);
+    color: var(--color-texto-secundario);
     font-size: 1.05rem;
 }
 
 .linea-verde {
     width: 60px;
     height: 4px;
-    background-color: var(--color-primary);
+    background-color: var(--color-primario);
     margin: 0.75rem auto 0 auto;
     border-radius: 2px;
 }
 
-/* Distribución Catálogo con Filtros Laterales */
 .layout-catalogo {
     display: grid;
     grid-template-columns: 280px 1fr;
@@ -451,13 +472,12 @@ img {
     align-items: start;
 }
 
-/* Barra Lateral de Filtros */
 .aside-filtros {
     background-color: #FFFFFF;
     padding: 1.5rem;
-    border-radius: var(--radius-md);
-    border: 1px solid var(--color-border);
-    box-shadow: var(--shadow-sm);
+    border-radius: var(--radio-medio);
+    border: 1px solid var(--color-borde);
+    box-shadow: var(--sombra-chica);
     position: sticky;
     top: 5rem;
 }
@@ -468,7 +488,7 @@ img {
     align-items: center;
     margin-bottom: 1.25rem;
     padding-bottom: 0.75rem;
-    border-bottom: 1px solid var(--color-border);
+    border-bottom: 1px solid var(--color-borde);
 }
 
 .filtro-titulo h3 {
@@ -484,7 +504,7 @@ img {
     font-size: 0.9rem;
     text-transform: uppercase;
     letter-spacing: 0.5px;
-    color: var(--color-text-muted);
+    color: var(--color-texto-secundario);
     margin-bottom: 0.75rem;
 }
 
@@ -500,34 +520,35 @@ img {
 
 .opcion-filtro input[type="checkbox"],
 .opcion-filtro input[type="radio"] {
-    accent-color: var(--color-primary);
+    accent-color: var(--color-primario);
     cursor: pointer;
     width: 16px;
     height: 16px;
 }
 
-/* Grid de Tarjetas (3 Columnas en Desktop) */
+/* --------------------------------------------------------------------------
+   8. TARJETAS DE OPORTUNIDADES
+   -------------------------------------------------------------------------- */
 .grid-oportunidades {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: 1.5rem;
 }
 
-/* Tarjeta Individual de Oportunidad */
 .tarjeta-oportunidad {
-    background-color: var(--color-bg-card);
-    border: 1px solid var(--color-border);
-    border-radius: var(--radius-md);
+    background-color: var(--color-fondo-tarjeta);
+    border: 1px solid var(--color-borde);
+    border-radius: var(--radio-medio);
     overflow: hidden;
-    box-shadow: var(--shadow-sm);
-    transition: var(--transition);
+    box-shadow: var(--sombra-chica);
+    transition: var(--transicion);
     display: flex;
     flex-direction: column;
 }
 
 .tarjeta-oportunidad:hover {
     transform: translateY(-5px);
-    box-shadow: var(--shadow-md);
+    box-shadow: var(--sombra-media);
     border-color: #BDBDBD;
 }
 
@@ -572,7 +593,7 @@ img {
 
 .tarjeta-ong {
     font-size: 0.85rem;
-    color: var(--color-primary);
+    color: var(--color-primario);
     font-weight: 600;
     display: flex;
     align-items: center;
@@ -598,7 +619,7 @@ img {
     flex-direction: column;
     gap: 0.35rem;
     font-size: 0.82rem;
-    color: var(--color-text-muted);
+    color: var(--color-texto-secundario);
 }
 
 .tarjeta-meta-item {
@@ -608,13 +629,13 @@ img {
 }
 
 .tarjeta-meta-item i {
-    color: var(--color-primary);
+    color: var(--color-primario);
 }
 
 .tarjeta-footer {
     padding: 1rem 1.25rem;
     background-color: #FAFAFA;
-    border-top: 1px solid var(--color-border);
+    border-top: 1px solid var(--color-borde);
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -631,7 +652,7 @@ img {
 }
 
 /* --------------------------------------------------------------------------
-   8. DETALLE DE OPORTUNIDAD (FICHA TÉCNICA)
+   9. DETALLE DE OPORTUNIDAD
    -------------------------------------------------------------------------- */
 .seccion-detalle {
     padding: 3rem 1.5rem;
@@ -645,16 +666,16 @@ img {
 
 .tarjeta-detalle-main {
     background-color: #FFFFFF;
-    border: 1px solid var(--color-border);
-    border-radius: var(--radius-md);
+    border: 1px solid var(--color-borde);
+    border-radius: var(--radio-medio);
     padding: 2.5rem;
-    box-shadow: var(--shadow-sm);
+    box-shadow: var(--sombra-chica);
 }
 
 .detalle-cabecera {
     margin-bottom: 2rem;
     padding-bottom: 1.5rem;
-    border-bottom: 1px solid var(--color-border);
+    border-bottom: 1px solid var(--color-borde);
 }
 
 .detalle-cabecera h1 {
@@ -667,7 +688,7 @@ img {
     align-items: center;
     gap: 1.5rem;
     font-size: 0.95rem;
-    color: var(--color-text-muted);
+    color: var(--color-texto-secundario);
 }
 
 .detalle-bloque {
@@ -697,13 +718,12 @@ img {
     font-weight: 600;
 }
 
-/* Tarjeta Lateral de Postulación */
 .aside-postulacion {
     background-color: #FFFFFF;
-    border: 1px solid var(--color-border);
-    border-radius: var(--radius-md);
+    border: 1px solid var(--color-borde);
+    border-radius: var(--radio-medio);
     padding: 2rem;
-    box-shadow: var(--shadow-md);
+    box-shadow: var(--sombra-media);
     position: sticky;
     top: 5rem;
 }
@@ -736,21 +756,21 @@ img {
 
 .lista-datos-clave i {
     font-size: 1.2rem;
-    color: var(--color-primary);
+    color: var(--color-primario);
     width: 24px;
 }
 
 /* --------------------------------------------------------------------------
-   9. FORMULARIOS Y VALIDACIONES (SECCIÓN 7.4.3)
+   10. FORMULARIOS Y VALIDACIONES
    -------------------------------------------------------------------------- */
 .formulario-contenedor {
     max-width: 650px;
     margin: 3rem auto;
     background-color: #FFFFFF;
     padding: 2.5rem;
-    border-radius: var(--radius-md);
-    border: 1px solid var(--color-border);
-    box-shadow: var(--shadow-md);
+    border-radius: var(--radio-medio);
+    border: 1px solid var(--color-borde);
+    box-shadow: var(--sombra-media);
 }
 
 .formulario-cabecera {
@@ -764,7 +784,7 @@ img {
 }
 
 .formulario-cabecera p {
-    color: var(--color-text-muted);
+    color: var(--color-texto-secundario);
     font-size: 0.95rem;
 }
 
@@ -792,11 +812,11 @@ img {
 .form-campo select,
 .form-campo textarea {
     padding: 0.7rem 0.9rem;
-    border: 1px solid var(--color-border);
-    border-radius: var(--radius-sm);
+    border: 1px solid var(--color-borde);
+    border-radius: var(--radio-chico);
     font-size: 0.95rem;
-    font-family: var(--font-body);
-    transition: var(--transition);
+    font-family: var(--fuente-cuerpo);
+    transition: var(--transicion);
     outline: none;
     background-color: #FFFFFF;
 }
@@ -804,20 +824,19 @@ img {
 .form-campo input:focus,
 .form-campo select:focus,
 .form-campo textarea:focus {
-    border-color: var(--color-primary);
+    border-color: var(--color-primario);
     box-shadow: 0 0 0 3px rgba(46, 125, 50, 0.15);
 }
 
-/* Estilos de Error y Feedback de Validación */
 .form-campo.error input,
 .form-campo.error select,
 .form-campo.error textarea {
-    border-color: var(--color-danger);
+    border-color: var(--color-peligro);
     background-color: #FFF8F8;
 }
 
 .form-mensaje-error {
-    color: var(--color-danger);
+    color: var(--color-peligro);
     font-size: 0.78rem;
     margin-top: 0.35rem;
     display: none;
@@ -829,7 +848,7 @@ img {
 }
 
 /* --------------------------------------------------------------------------
-   10. VENTANAS MODALES
+   11. VENTANAS MODALES
    -------------------------------------------------------------------------- */
 .modal-overlay {
     position: fixed;
@@ -844,7 +863,7 @@ img {
     z-index: 2000;
     opacity: 0;
     visibility: hidden;
-    transition: var(--transition);
+    transition: var(--transicion);
 }
 
 .modal-overlay.activo {
@@ -854,14 +873,14 @@ img {
 
 .modal-caja {
     background-color: #FFFFFF;
-    border-radius: var(--radius-md);
+    border-radius: var(--radio-medio);
     width: 90%;
     max-width: 520px;
     padding: 2rem;
-    box-shadow: var(--shadow-lg);
+    box-shadow: var(--sombra-grande);
     position: relative;
     transform: translateY(-20px);
-    transition: var(--transition);
+    transition: var(--transicion);
 }
 
 .modal-overlay.activo .modal-caja {
@@ -875,16 +894,16 @@ img {
     background: none;
     border: none;
     font-size: 1.5rem;
-    color: var(--color-text-muted);
+    color: var(--color-texto-secundario);
     cursor: pointer;
 }
 
 .modal-cerrar:hover {
-    color: var(--color-danger);
+    color: var(--color-peligro);
 }
 
 /* --------------------------------------------------------------------------
-   11. PIE DE PÁGINA INSTITUCIONAL (FOOTER)
+   12. PIE DE PÁGINA (FOOTER)
    -------------------------------------------------------------------------- */
 .footer-sitio {
     background-color: #1A202C;
@@ -937,10 +956,8 @@ img {
 }
 
 /* --------------------------------------------------------------------------
-   12. DISEÑO RESPONSIVE Y MEDIA QUERIES (SECCIÓN 7.3.6)
+   13. DISEÑO RESPONSIVO (TABLETS Y CELULARES)
    -------------------------------------------------------------------------- */
-
-/* TABLETS (Máximo 992px) */
 @media (max-width: 992px) {
     .hero-container {
         grid-template-columns: 1fr;
@@ -990,7 +1007,6 @@ img {
     }
 }
 
-/* TELÉFONOS MÓVILES (Máximo 768px) */
 @media (max-width: 768px) {
     .boton-menu-movil {
         display: block;
@@ -1003,9 +1019,9 @@ img {
         left: 0;
         width: 100%;
         background-color: #FFFFFF;
-        box-shadow: var(--shadow-md);
+        box-shadow: var(--sombra-media);
         padding: 1.5rem;
-        border-bottom: 2px solid var(--color-primary);
+        border-bottom: 2px solid var(--color-primario);
     }
 
     .nav-principal.activo {
@@ -1024,7 +1040,7 @@ img {
     }
 
     .acciones-usuario {
-        display: none; /* Se integran en el menú móvil o vistas directas */
+        display: none;
     }
 
     .hero-texto h1 {

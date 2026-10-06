@@ -1,4 +1,4 @@
-# VoluntMatch Cusco 🤝🇵🇪
+# VoluntMatch Cusco
 
 > **Plataforma Web de Match de Voluntariado Local**  
 > *Conexión Inteligente entre Voluntarios y Organizaciones Sociales en Cusco*
@@ -10,7 +10,7 @@
 
 ---
 
-## 📌 Descripción del Proyecto
+## Descripción del Proyecto
 
 **VoluntMatch Cusco** es una solución tecnológica orientada al desarrollo e impacto social en la región de Cusco. La plataforma aborda la fragmentación existente entre la oferta de voluntariado universitario y las necesidades operativas de las Organizaciones No Gubernamentales (ONG), comedores y albergues locales.
 
@@ -18,7 +18,7 @@ A través de un mecanismo de emparejamiento inteligente (*match*) basado en disp
 
 ---
 
-## 👥 Equipo de Desarrollo - Grupo 6
+## Equipo de Desarrollo - Grupo 6
 
 | Integrante | Rol en el Proyecto | Aporte |
 | :--- | :--- | :---: |
@@ -33,7 +33,7 @@ A través de un mecanismo de emparejamiento inteligente (*match*) basado en disp
 
 ---
 
-## 🚀 Tecnologías Utilizadas
+## Tecnologías Utilizadas
 
 - **HTML5:** Marcado semántico y accesible (etiquetas `<header>`, `<nav>`, `<main>`, `<section>`, `<article>`, `<aside>`, `<footer>`).
 - **CSS3:** Sistema de diseño responsivo mediante **CSS Grid**, **Flexbox**, variables personalizadas (`:root`) y *Media Queries*.
@@ -42,7 +42,7 @@ A través de un mecanismo de emparejamiento inteligente (*match*) basado en disp
 
 ---
 
-## 📁 Estructura del Repositorio
+## Estructura del Repositorio
 
 ```text
 VoluntMatch-Cusco/
@@ -69,7 +69,7 @@ VoluntMatch-Cusco/
 
 ---
 
-## 💻 Instalación y Ejecución Local
+## Instalación y Ejecución Local
 
 No requiere de instalación de paquetes de Node ni configuraciones complejas en esta etapa:
 
@@ -87,7 +87,7 @@ No requiere de instalación de paquetes de Node ni configuraciones complejas en 
 
 ---
 
-## 🧪 Pruebas de Funcionalidad
+## Pruebas de Funcionalidad
 
 1. **Catálogo de Convocatorias (`oportunidades.html`):**
    - Filtrar en tiempo real por áreas (*Educación*, *Sistemas*, *Medio Ambiente*) o por distrito de Cusco (*San Jerónimo*, *Wanchaq*).
@@ -100,6 +100,7 @@ No requiere de instalación de paquetes de Node ni configuraciones complejas en 
 
 ---
 
-## 📄 Licencia
+## Licencia
 
 Este proyecto se encuentra bajo la [Licencia MIT](LICENSE) - código libre para propósitos académicos y comunitarios.
+

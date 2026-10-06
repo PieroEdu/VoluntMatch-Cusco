@@ -21,7 +21,7 @@
             <div class="logo-sitio">
                 <a href="index.html" class="d-flex align-items-center text-decoration-none">
                     <i class="bi bi-people-fill me-2"></i>
-                    <span style="color: var(--color-primary); font-weight: 800;">VoluntMatch</span>
+                    <span style="color: var(--color-primario); font-weight: 800;">VoluntMatch</span>
                     <span class="logo-tag">Cusco</span>
                 </a>
             </div>
@@ -236,57 +236,58 @@
     <!-- Script Principal -->
     <script src="js/main.js"></script>
     <script>
-        // Lógica de Renderizado y Cancelación de Postulaciones (CRUD Local)
+        // Control de postulaciones del voluntario (CRUD Local)
         document.addEventListener('DOMContentLoaded', () => {
-            const tbody = document.getElementById('tabla-postulaciones-body');
-            const msgVacio = document.getElementById('sin-postulaciones-msg');
-            const contadorPost = document.getElementById('indicador-postulaciones');
+            const cuerpoTabla = document.getElementById('tabla-postulaciones-body');
+            const mensajeVacio = document.getElementById('sin-postulaciones-msg');
+            const contadorPostulaciones = document.getElementById('indicador-postulaciones');
+            const clavePostulaciones = (typeof CLAVES_ALMACENAMIENTO !== 'undefined') ? CLAVES_ALMACENAMIENTO.POSTULACIONES : 'voluntmatch_postulaciones';
 
             function cargarTabla() {
                 let postulaciones = [];
                 try {
-                    postulaciones = JSON.parse(localStorage.getItem(STORAGE_KEYS.POSTULACIONES) || '[]');
-                } catch (e) {
+                    postulaciones = JSON.parse(localStorage.getItem(clavePostulaciones) || '[]');
+                } catch (error) {
                     postulaciones = [];
                 }
 
-                if (contadorPost) contadorPost.textContent = postulaciones.length;
+                if (contadorPostulaciones) contadorPostulaciones.textContent = postulaciones.length;
 
                 if (postulaciones.length === 0) {
-                    tbody.innerHTML = '';
-                    msgVacio.classList.remove('d-none');
+                    if (cuerpoTabla) cuerpoTabla.innerHTML = '';
+                    if (mensajeVacio) mensajeVacio.classList.remove('d-none');
                     return;
                 }
 
-                msgVacio.classList.add('d-none');
-                tbody.innerHTML = postulaciones.map(p => {
-                    const badgeColor = p.estado === 'Aceptado' ? 'bg-success' : (p.estado === 'Pendiente' ? 'bg-warning text-dark' : 'bg-secondary');
-                    return `
-                        <tr>
-                            <td>
-                                <strong>${p.titulo}</strong>
-                            </td>
-                            <td>${p.ong}</td>
-                            <td>${p.fecha}</td>
-                            <td><span class="badge ${badgeColor}">${p.estado}</span></td>
-                            <td><span class="fw-bold">${p.horasAcumuladas || 0} hrs</span></td>
-                            <td class="text-end">
-                                <button type="button" class="btn btn-outline-danger btn-sm btn-cancelar-post" data-id="${p.id}" title="Cancelar postulación">
-                                    <i class="bi bi-trash3"></i> Cancelar
-                                </button>
-                            </td>
-                        </tr>
-                    `;
-                }).join('');
+                if (mensajeVacio) mensajeVacio.classList.add('d-none');
+                if (cuerpoTabla) {
+                    cuerpoTabla.innerHTML = postulaciones.map(postulacion => {
+                        const colorInsignia = postulacion.estado === 'Aceptado' ? 'bg-success' : (postulacion.estado === 'Pendiente' ? 'bg-warning text-dark' : 'bg-secondary');
+                        return `
+                            <tr>
+                                <td><strong>${postulacion.titulo}</strong></td>
+                                <td>${postulacion.ong}</td>
+                                <td>${postulacion.fecha}</td>
+                                <td><span class="badge ${colorInsignia}">${postulacion.estado}</span></td>
+                                <td><span class="fw-bold">${postulacion.horasAcumuladas || 0} hrs</span></td>
+                                <td class="text-end">
+                                    <button type="button" class="btn btn-outline-danger btn-sm btn-cancelar-post" data-id="${postulacion.id}" title="Cancelar postulación">
+                                        <i class="bi bi-trash3"></i> Cancelar
+                                    </button>
+                                </td>
+                            </tr>
+                        `;
+                    }).join('');
+                }
 
-                // Asignar eventos de eliminación (Delete CRUD)
-                document.querySelectorAll('.btn-cancelar-post').forEach(btn => {
-                    btn.addEventListener('click', (e) => {
-                        const id = e.currentTarget.getAttribute('data-id');
+                // Eventos de cancelación
+                document.querySelectorAll('.btn-cancelar-post').forEach(boton => {
+                    boton.addEventListener('click', (evento) => {
+                        const identificador = evento.currentTarget.getAttribute('data-id');
                         if (confirm('¿Estás seguro de que deseas cancelar tu postulación a esta causa?')) {
-                            let lista = JSON.parse(localStorage.getItem(STORAGE_KEYS.POSTULACIONES) || '[]');
-                            lista = lista.filter(item => item.id !== id);
-                            localStorage.setItem(STORAGE_KEYS.POSTULACIONES, JSON.stringify(lista));
+                            let lista = JSON.parse(localStorage.getItem(clavePostulaciones) || '[]');
+                            lista = lista.filter(item => item.id !== identificador);
+                            localStorage.setItem(clavePostulaciones, JSON.stringify(lista));
                             cargarTabla();
                         }
                     });
