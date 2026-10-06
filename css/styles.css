@@ -1,0 +1,1058 @@
+/* ==========================================================================
+   VoluntMatch Cusco - Hoja de Estilos Principal (styles.css)
+   Universidad Continental - Curso: Programación Web
+   Equipo: Piero Alcca, Luis Dueñas, Patrick Leguia, Alexis Rojas
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   1. IMPORTACIÓN DE TIPOGRAFÍAS Y VARIABLES GLOBALES
+   -------------------------------------------------------------------------- */
+@import url('https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300..800;1,300..800&family=Poppins:wght@400;500;600;700;800&display=swap');
+
+:root {
+    /* Paleta Institucional (Sección 7.3.1 del informe) */
+    --color-primary: #2E7D32;         /* Verde institucional principal */
+    --color-primary-dark: #1B5E20;    /* Verde oscuro para hovers y bordes */
+    --color-primary-light: #E8F5E9;   /* Fondo tenue para insignias y selecciones */
+    --color-accent: #FF8F00;          /* Acento cálido para alertas de cupos */
+    --color-accent-hover: #E65100;
+    
+    /* Escala de Grises y Fondos */
+    --color-bg-body: #F4F6F8;        /* Tono gris claro para el fondo general */
+    --color-bg-card: #FFFFFF;        /* Blanco puro para tarjetas y formularios */
+    --color-text-main: #212529;      /* Texto de alto contraste */
+    --color-text-muted: #6C757D;     /* Texto descriptivo secundario */
+    --color-border: #E0E0E0;         /* Líneas divisorias sutiles */
+    
+    /* Estados y Alertas */
+    --color-success: #2E7D32;
+    --color-warning: #F57C00;
+    --color-danger: #D32F2F;
+    --color-info: #0288D1;
+
+    /* Tipografías */
+    --font-heading: 'Poppins', sans-serif;
+    --font-body: 'Open Sans', Arial, sans-serif;
+
+    /* Sombras y Elevaciones */
+    --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.05);
+    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.08);
+    --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.12);
+    --transition: all 0.25s ease-in-out;
+    --radius-sm: 6px;
+    --radius-md: 10px;
+    --radius-lg: 16px;
+}
+
+/* --------------------------------------------------------------------------
+   2. REINICIO Y ESTILOS BASE (BOX MODEL)
+   -------------------------------------------------------------------------- */
+*, *::before, *::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    font-family: var(--font-body);
+    font-size: 16px;
+    line-height: 1.6;
+    color: var(--text-main, #212529);
+    background-color: var(--color-bg-body);
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-heading);
+    color: #1A202C;
+    font-weight: 700;
+    line-height: 1.3;
+}
+
+a {
+    color: var(--color-primary);
+    text-decoration: none;
+    transition: var(--transition);
+}
+
+a:hover {
+    color: var(--color-primary-dark);
+}
+
+img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+}
+
+/* --------------------------------------------------------------------------
+   3. CABECERA Y NAVEGACIÓN PRINCIPAL (FLEXBOX)
+   -------------------------------------------------------------------------- */
+.header-principal {
+    background-color: #FFFFFF;
+    border-bottom: 1px solid var(--color-border);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    box-shadow: var(--shadow-sm);
+}
+
+.header-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0.75rem 1.5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.logo-sitio {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    font-family: var(--font-heading);
+    font-size: 1.4rem;
+    font-weight: 800;
+    color: var(--color-primary);
+}
+
+.logo-sitio i {
+    font-size: 1.8rem;
+    color: var(--color-primary);
+}
+
+.logo-sitio .logo-tag {
+    font-size: 0.75rem;
+    background: var(--color-primary-light);
+    color: var(--color-primary-dark);
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-weight: 600;
+    margin-left: 4px;
+}
+
+.nav-principal ul {
+    display: flex;
+    list-style: none;
+    align-items: center;
+    gap: 1.5rem;
+}
+
+.nav-principal a {
+    color: #4A5568;
+    font-weight: 500;
+    font-size: 0.95rem;
+    padding: 0.4rem 0.6rem;
+    border-radius: var(--radius-sm);
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+}
+
+.nav-principal a:hover,
+.nav-principal a.activo {
+    color: var(--color-primary);
+    background-color: var(--color-primary-light);
+    font-weight: 600;
+}
+
+.acciones-usuario {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+/* Botón Hamburguesa Móvil */
+.boton-menu-movil {
+    display: none;
+    background: none;
+    border: none;
+    font-size: 1.75rem;
+    color: #2D3748;
+    cursor: pointer;
+    padding: 0.25rem;
+}
+
+/* --------------------------------------------------------------------------
+   4. BOTONES Y COMPONENTES REUTILIZABLES
+   -------------------------------------------------------------------------- */
+.btn-custom {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.6rem 1.25rem;
+    font-family: var(--font-heading);
+    font-size: 0.95rem;
+    font-weight: 600;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    border: 2px solid transparent;
+    transition: var(--transition);
+    text-align: center;
+}
+
+.btn-primary-custom {
+    background-color: var(--color-primary);
+    color: #FFFFFF !important;
+}
+
+.btn-primary-custom:hover {
+    background-color: var(--color-primary-dark);
+    box-shadow: 0 4px 10px rgba(46, 125, 50, 0.3);
+}
+
+.btn-outline-custom {
+    background-color: transparent;
+    border-color: var(--color-primary);
+    color: var(--color-primary) !important;
+}
+
+.btn-outline-custom:hover {
+    background-color: var(--color-primary);
+    color: #FFFFFF !important;
+}
+
+.btn-accent-custom {
+    background-color: var(--color-accent);
+    color: #FFFFFF !important;
+}
+
+.btn-accent-custom:hover {
+    background-color: var(--color-accent-hover);
+}
+
+.badge-categoria {
+    display: inline-block;
+    padding: 0.25rem 0.65rem;
+    font-size: 0.75rem;
+    font-weight: 700;
+    border-radius: 20px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.badge-educacion { background-color: #E8F5E9; color: #2E7D32; }
+.badge-sistemas  { background-color: #E1F5FE; color: #0288D1; }
+.badge-ambiente  { background-color: #F1F8E9; color: #558B2F; }
+.badge-logistica { background-color: #FFF3E0; color: #E65100; }
+.badge-salud     { background-color: #FCE4EC; color: #C2185B; }
+
+/* --------------------------------------------------------------------------
+   5. SECCIÓN HERO (PORTADA PRINCIPAL)
+   -------------------------------------------------------------------------- */
+.hero-seccion {
+    background: linear-gradient(135deg, #1B5E20 0%, #2E7D32 60%, #388E3C 100%);
+    color: #FFFFFF;
+    padding: 4rem 1.5rem 5rem 1.5rem;
+    position: relative;
+    overflow: hidden;
+}
+
+.hero-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 1.2fr 0.8fr;
+    gap: 3rem;
+    align-items: center;
+}
+
+.hero-texto h1 {
+    font-size: 2.8rem;
+    color: #FFFFFF;
+    margin-bottom: 1.25rem;
+    font-weight: 800;
+}
+
+.hero-texto h1 span {
+    color: #FFD54F;
+}
+
+.hero-texto p {
+    font-size: 1.15rem;
+    opacity: 0.95;
+    margin-bottom: 2rem;
+    max-width: 580px;
+}
+
+/* Buscador Rápido del Hero */
+.hero-search-box {
+    background-color: #FFFFFF;
+    padding: 0.75rem;
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-lg);
+    display: grid;
+    grid-template-columns: 1fr 1fr auto;
+    gap: 0.75rem;
+    align-items: center;
+}
+
+.hero-search-box .input-group-custom {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 0.75rem;
+    background-color: #F8FAFC;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--color-border);
+}
+
+.hero-search-box .input-group-custom i {
+    color: var(--color-primary);
+    font-size: 1.1rem;
+}
+
+.hero-search-box input,
+.hero-search-box select {
+    border: none;
+    background: transparent;
+    width: 100%;
+    outline: none;
+    font-size: 0.9rem;
+    font-family: var(--font-body);
+}
+
+.hero-banner-card {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: var(--radius-lg);
+    padding: 2rem;
+    box-shadow: var(--shadow-lg);
+}
+
+.hero-stat-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+}
+
+.stat-item {
+    text-align: center;
+    background: rgba(255, 255, 255, 0.15);
+    padding: 1.25rem 1rem;
+    border-radius: var(--radius-md);
+}
+
+.stat-number {
+    font-family: var(--font-heading);
+    font-size: 2.2rem;
+    font-weight: 800;
+    color: #FFD54F;
+    line-height: 1.1;
+}
+
+.stat-label {
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: #E8F5E9;
+    margin-top: 0.25rem;
+}
+
+/* --------------------------------------------------------------------------
+   6. SECCIÓN DE ESTADÍSTICAS E IMPACTO SOCIAL (MÉTRICAS 6.6)
+   -------------------------------------------------------------------------- */
+.seccion-metricas {
+    background-color: #FFFFFF;
+    padding: 3rem 1.5rem;
+    border-bottom: 1px solid var(--color-border);
+}
+
+.container-ancho {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.grid-metricas {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 2rem;
+    text-align: center;
+}
+
+.metrica-card {
+    padding: 1rem;
+    border-radius: var(--radius-md);
+    transition: var(--transition);
+}
+
+.metrica-card:hover {
+    transform: translateY(-4px);
+}
+
+.metrica-icono {
+    width: 60px;
+    height: 60px;
+    margin: 0 auto 1rem auto;
+    border-radius: 50%;
+    background-color: var(--color-primary-light);
+    color: var(--color-primary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.6rem;
+}
+
+.metrica-card h3 {
+    font-size: 1.75rem;
+    color: var(--color-primary);
+    margin-bottom: 0.25rem;
+}
+
+.metrica-card p {
+    font-size: 0.9rem;
+    color: var(--color-text-muted);
+}
+
+/* --------------------------------------------------------------------------
+   7. SECCIÓN DE OPORTUNIDADES (CSS GRID - SECCIÓN 7.3.2)
+   -------------------------------------------------------------------------- */
+.seccion-catalogo {
+    padding: 3.5rem 1.5rem;
+    flex: 1;
+}
+
+.encabezado-seccion {
+    margin-bottom: 2.5rem;
+    text-align: center;
+}
+
+.encabezado-seccion h2 {
+    font-size: 2rem;
+    color: #1A202C;
+    margin-bottom: 0.5rem;
+}
+
+.encabezado-seccion p {
+    color: var(--color-text-muted);
+    font-size: 1.05rem;
+}
+
+.linea-verde {
+    width: 60px;
+    height: 4px;
+    background-color: var(--color-primary);
+    margin: 0.75rem auto 0 auto;
+    border-radius: 2px;
+}
+
+/* Distribución Catálogo con Filtros Laterales */
+.layout-catalogo {
+    display: grid;
+    grid-template-columns: 280px 1fr;
+    gap: 2rem;
+    align-items: start;
+}
+
+/* Barra Lateral de Filtros */
+.aside-filtros {
+    background-color: #FFFFFF;
+    padding: 1.5rem;
+    border-radius: var(--radius-md);
+    border: 1px solid var(--color-border);
+    box-shadow: var(--shadow-sm);
+    position: sticky;
+    top: 5rem;
+}
+
+.filtro-titulo {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.25rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid var(--color-border);
+}
+
+.filtro-titulo h3 {
+    font-size: 1.15rem;
+    color: #2D3748;
+}
+
+.filtro-grupo {
+    margin-bottom: 1.5rem;
+}
+
+.filtro-grupo h4 {
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--color-text-muted);
+    margin-bottom: 0.75rem;
+}
+
+.opcion-filtro {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    font-size: 0.9rem;
+    color: #4A5568;
+    margin-bottom: 0.5rem;
+    cursor: pointer;
+}
+
+.opcion-filtro input[type="checkbox"],
+.opcion-filtro input[type="radio"] {
+    accent-color: var(--color-primary);
+    cursor: pointer;
+    width: 16px;
+    height: 16px;
+}
+
+/* Grid de Tarjetas (3 Columnas en Desktop) */
+.grid-oportunidades {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+}
+
+/* Tarjeta Individual de Oportunidad */
+.tarjeta-oportunidad {
+    background-color: var(--color-bg-card);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    overflow: hidden;
+    box-shadow: var(--shadow-sm);
+    transition: var(--transition);
+    display: flex;
+    flex-direction: column;
+}
+
+.tarjeta-oportunidad:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--shadow-md);
+    border-color: #BDBDBD;
+}
+
+.tarjeta-imagen-wrapper {
+    position: relative;
+    height: 170px;
+    background-color: #E2E8F0;
+    overflow: hidden;
+}
+
+.tarjeta-imagen-wrapper img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.4s ease;
+}
+
+.tarjeta-oportunidad:hover .tarjeta-imagen-wrapper img {
+    transform: scale(1.05);
+}
+
+.tarjeta-imagen-wrapper .badge-categoria {
+    position: absolute;
+    top: 12px;
+    left: 12px;
+    z-index: 2;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+}
+
+.tarjeta-cuerpo {
+    padding: 1.25rem;
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+}
+
+.tarjeta-cuerpo h3 {
+    font-size: 1.15rem;
+    margin-bottom: 0.5rem;
+    color: #1A202C;
+}
+
+.tarjeta-ong {
+    font-size: 0.85rem;
+    color: var(--color-primary);
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    margin-bottom: 0.75rem;
+}
+
+.tarjeta-descripcion {
+    font-size: 0.88rem;
+    color: #4A5568;
+    margin-bottom: 1rem;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.tarjeta-meta {
+    margin-top: auto;
+    padding-top: 0.75rem;
+    border-top: 1px solid #EDF2F7;
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+    font-size: 0.82rem;
+    color: var(--color-text-muted);
+}
+
+.tarjeta-meta-item {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+}
+
+.tarjeta-meta-item i {
+    color: var(--color-primary);
+}
+
+.tarjeta-footer {
+    padding: 1rem 1.25rem;
+    background-color: #FAFAFA;
+    border-top: 1px solid var(--color-border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.cupos-texto {
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: #2E7D32;
+}
+
+.cupos-texto.poco {
+    color: #E65100;
+}
+
+/* --------------------------------------------------------------------------
+   8. DETALLE DE OPORTUNIDAD (FICHA TÉCNICA)
+   -------------------------------------------------------------------------- */
+.seccion-detalle {
+    padding: 3rem 1.5rem;
+}
+
+.layout-detalle {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 2.5rem;
+}
+
+.tarjeta-detalle-main {
+    background-color: #FFFFFF;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    padding: 2.5rem;
+    box-shadow: var(--shadow-sm);
+}
+
+.detalle-cabecera {
+    margin-bottom: 2rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid var(--color-border);
+}
+
+.detalle-cabecera h1 {
+    font-size: 2.2rem;
+    margin: 0.75rem 0;
+}
+
+.detalle-ong-info {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    font-size: 0.95rem;
+    color: var(--color-text-muted);
+}
+
+.detalle-bloque {
+    margin-bottom: 2rem;
+}
+
+.detalle-bloque h3 {
+    font-size: 1.25rem;
+    margin-bottom: 0.75rem;
+    color: #2D3748;
+}
+
+.lista-habilidades {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    list-style: none;
+    margin-top: 0.5rem;
+}
+
+.item-habilidad {
+    background-color: #EDF2F7;
+    color: #2D3748;
+    padding: 0.35rem 0.85rem;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 600;
+}
+
+/* Tarjeta Lateral de Postulación */
+.aside-postulacion {
+    background-color: #FFFFFF;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    padding: 2rem;
+    box-shadow: var(--shadow-md);
+    position: sticky;
+    top: 5rem;
+}
+
+.postulacion-caja {
+    text-align: center;
+}
+
+.postulacion-caja h4 {
+    font-size: 1.3rem;
+    margin-bottom: 1rem;
+    color: #1A202C;
+}
+
+.lista-datos-clave {
+    list-style: none;
+    text-align: left;
+    margin: 1.5rem 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.85rem;
+    font-size: 0.9rem;
+}
+
+.lista-datos-clave li {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.lista-datos-clave i {
+    font-size: 1.2rem;
+    color: var(--color-primary);
+    width: 24px;
+}
+
+/* --------------------------------------------------------------------------
+   9. FORMULARIOS Y VALIDACIONES (SECCIÓN 7.4.3)
+   -------------------------------------------------------------------------- */
+.formulario-contenedor {
+    max-width: 650px;
+    margin: 3rem auto;
+    background-color: #FFFFFF;
+    padding: 2.5rem;
+    border-radius: var(--radius-md);
+    border: 1px solid var(--color-border);
+    box-shadow: var(--shadow-md);
+}
+
+.formulario-cabecera {
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+.formulario-cabecera h2 {
+    font-size: 1.8rem;
+    color: #1A202C;
+}
+
+.formulario-cabecera p {
+    color: var(--color-text-muted);
+    font-size: 0.95rem;
+}
+
+.form-grid-dos {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.25rem;
+}
+
+.form-campo {
+    margin-bottom: 1.25rem;
+    display: flex;
+    flex-direction: column;
+    text-align: left;
+}
+
+.form-campo label {
+    font-size: 0.88rem;
+    font-weight: 600;
+    color: #374151;
+    margin-bottom: 0.4rem;
+}
+
+.form-campo input,
+.form-campo select,
+.form-campo textarea {
+    padding: 0.7rem 0.9rem;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-sm);
+    font-size: 0.95rem;
+    font-family: var(--font-body);
+    transition: var(--transition);
+    outline: none;
+    background-color: #FFFFFF;
+}
+
+.form-campo input:focus,
+.form-campo select:focus,
+.form-campo textarea:focus {
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 3px rgba(46, 125, 50, 0.15);
+}
+
+/* Estilos de Error y Feedback de Validación */
+.form-campo.error input,
+.form-campo.error select,
+.form-campo.error textarea {
+    border-color: var(--color-danger);
+    background-color: #FFF8F8;
+}
+
+.form-mensaje-error {
+    color: var(--color-danger);
+    font-size: 0.78rem;
+    margin-top: 0.35rem;
+    display: none;
+    font-weight: 600;
+}
+
+.form-campo.error .form-mensaje-error {
+    display: block;
+}
+
+/* --------------------------------------------------------------------------
+   10. VENTANAS MODALES
+   -------------------------------------------------------------------------- */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 2000;
+    opacity: 0;
+    visibility: hidden;
+    transition: var(--transition);
+}
+
+.modal-overlay.activo {
+    opacity: 1;
+    visibility: visible;
+}
+
+.modal-caja {
+    background-color: #FFFFFF;
+    border-radius: var(--radius-md);
+    width: 90%;
+    max-width: 520px;
+    padding: 2rem;
+    box-shadow: var(--shadow-lg);
+    position: relative;
+    transform: translateY(-20px);
+    transition: var(--transition);
+}
+
+.modal-overlay.activo .modal-caja {
+    transform: translateY(0);
+}
+
+.modal-cerrar {
+    position: absolute;
+    top: 1rem;
+    right: 1.25rem;
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    color: var(--color-text-muted);
+    cursor: pointer;
+}
+
+.modal-cerrar:hover {
+    color: var(--color-danger);
+}
+
+/* --------------------------------------------------------------------------
+   11. PIE DE PÁGINA INSTITUCIONAL (FOOTER)
+   -------------------------------------------------------------------------- */
+.footer-sitio {
+    background-color: #1A202C;
+    color: #CBD5E0;
+    padding: 3.5rem 1.5rem 1.5rem 1.5rem;
+    margin-top: auto;
+}
+
+.footer-grid {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 1.5fr 1fr 1fr 1fr;
+    gap: 2.5rem;
+    margin-bottom: 2.5rem;
+}
+
+.footer-col h4 {
+    color: #FFFFFF;
+    font-size: 1.05rem;
+    margin-bottom: 1.2rem;
+    font-weight: 600;
+}
+
+.footer-col ul {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+}
+
+.footer-col a {
+    color: #A0AEC0;
+    font-size: 0.9rem;
+}
+
+.footer-col a:hover {
+    color: #81C784;
+    padding-left: 4px;
+}
+
+.footer-creditos {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding-top: 1.5rem;
+    border-top: 1px solid #2D3748;
+    text-align: center;
+    font-size: 0.85rem;
+    color: #718096;
+}
+
+/* --------------------------------------------------------------------------
+   12. DISEÑO RESPONSIVE Y MEDIA QUERIES (SECCIÓN 7.3.6)
+   -------------------------------------------------------------------------- */
+
+/* TABLETS (Máximo 992px) */
+@media (max-width: 992px) {
+    .hero-container {
+        grid-template-columns: 1fr;
+        gap: 2rem;
+        text-align: center;
+    }
+
+    .hero-texto p {
+        margin: 0 auto 2rem auto;
+    }
+
+    .hero-search-box {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .hero-search-box .btn-custom {
+        grid-column: span 2;
+    }
+
+    .layout-catalogo {
+        grid-template-columns: 1fr;
+    }
+
+    .aside-filtros {
+        position: static;
+        margin-bottom: 1.5rem;
+    }
+
+    .grid-oportunidades {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .grid-metricas {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .layout-detalle {
+        grid-template-columns: 1fr;
+    }
+
+    .aside-postulacion {
+        position: static;
+    }
+
+    .footer-grid {
+        grid-template-columns: 1fr 1fr;
+    }
+}
+
+/* TELÉFONOS MÓVILES (Máximo 768px) */
+@media (max-width: 768px) {
+    .boton-menu-movil {
+        display: block;
+    }
+
+    .nav-principal {
+        display: none;
+        position: absolute;
+        top: 100%;
+        left: 0;
+        width: 100%;
+        background-color: #FFFFFF;
+        box-shadow: var(--shadow-md);
+        padding: 1.5rem;
+        border-bottom: 2px solid var(--color-primary);
+    }
+
+    .nav-principal.activo {
+        display: block;
+    }
+
+    .nav-principal ul {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.75rem;
+    }
+
+    .nav-principal a {
+        width: 100%;
+        padding: 0.6rem 0.75rem;
+    }
+
+    .acciones-usuario {
+        display: none; /* Se integran en el menú móvil o vistas directas */
+    }
+
+    .hero-texto h1 {
+        font-size: 2.1rem;
+    }
+
+    .hero-search-box {
+        grid-template-columns: 1fr;
+    }
+
+    .hero-search-box .btn-custom {
+        grid-column: span 1;
+    }
+
+    .grid-oportunidades {
+        grid-template-columns: 1fr;
+    }
+
+    .grid-metricas {
+        grid-template-columns: 1fr;
+    }
+
+    .form-grid-dos {
+        grid-template-columns: 1fr;
+    }
+
+    .footer-grid {
+        grid-template-columns: 1fr;
+        gap: 1.75rem;
+    }
+}
