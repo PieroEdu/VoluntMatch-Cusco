@@ -51,7 +51,9 @@ class AuthController extends Controller
 
         if (Auth::attempt($credenciales)) {
             $request->session()->regenerate();
-            if ($request->input('rol') === 'ong') {
+            $user = Auth::user();
+            $esOng = $request->input('rol') === 'ong' || \App\Models\Organizacion::where('correo', $user->email)->exists();
+            if ($esOng) {
                 return redirect()->route('dashboard-organizacion');
             }
             return redirect()->route('home');

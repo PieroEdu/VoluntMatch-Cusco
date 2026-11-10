@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Oportunidad;
+use App\Models\Organizacion;
 use App\Models\Postulacion;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -54,13 +55,35 @@ class DashboardController extends Controller
      */
     public function organizacion()
     {
-        // Convocatorias
-        $oportunidades = Oportunidad::withCount('postulaciones')
-            ->orderBy('id', 'desc')
-            ->get();
+        $user = Auth::user();
 
-        // Postulantes recibidos para evaluación
+        // Identificar la organización vinculada al usuario autenticado
+        $organizacionActual = null;
+        if ($user) {
+            $organizacionActual = Organizacion::where('correo', $user->email)
+                ->orWhere('nombre', $user->name)
+                ->first();
+        }
+
+        // Si no está vinculado explícitamente, tomamos la primera organización verificada como contexto
+        if (!$organizacionActual) {
+            $organizacionActual = Organizacion::first();
+        }
+
+        // Convocatorias de la organización
+        $oportunidadesQuery = Oportunidad::withCount('postulaciones');
+        if ($organizacionActual) {
+            $oportunidadesQuery->where(function ($query) use ($organizacionActual) {
+                $query->where('organizacion_id', $organizacionActual->id)
+                      ->orWhere('ong', $organizacionActual->nombre);
+            });
+        }
+        $oportunidades = $oportunidadesQuery->orderBy('id', 'desc')->get();
+
+        // Postulantes recibidos para convocatorias de esta organización
+        $oportunidadIds = $oportunidades->pluck('id');
         $postulaciones = Postulacion::with('oportunidad')
+            ->whereIn('oportunidad_id', $oportunidadIds)
             ->orderBy('id', 'desc')
             ->get();
 
@@ -72,6 +95,7 @@ class DashboardController extends Controller
         $tasaCobertura = $totalCupos > 0 ? round(($matchesConfirmados / $totalCupos) * 100) : 0;
 
         return view('dashboard/organizacion', compact(
+            'organizacionActual',
             'oportunidades',
             'postulaciones',
             'convocatoriasActivas',

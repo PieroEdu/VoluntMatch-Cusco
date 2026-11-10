@@ -98,7 +98,10 @@ class OportunidadController extends Controller
         // Geocodificar ubicación con la API de Nominatim / Fallback distrital
         $coords = $this->geocodingService->geocode($validated['distrito']);
 
+        $organizacion = Organizacion::where('nombre', $validated['ong'])->first();
+
         $oportunidad = Oportunidad::create([
+            'organizacion_id' => $organizacion?->id,
             'titulo' => $validated['titulo'],
             'ong' => $validated['ong'],
             'distrito' => $validated['distrito'],

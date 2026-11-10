@@ -40,7 +40,7 @@
 
             <div class="acciones-usuario">
                 <span class="d-flex align-items-center small fw-semibold text-secondary me-2">
-                    <i class="bi bi-building-fill fs-5 text-warning me-1"></i> Hogar Infantil Azul Wasi
+                    <i class="bi bi-building-fill fs-5 text-warning me-1"></i> {{ $organizacionActual->nombre ?? (Auth::user()->name ?? 'Organización Social') }}
                 </span>
                 <a href="{{ route('logout') }}" class="btn-custom btn-outline-custom" style="padding: 0.35rem 0.8rem; font-size: 0.85rem;" title="Cerrar sesión">
                     <i class="bi bi-box-arrow-right"></i> Salir
@@ -76,9 +76,9 @@
                     <span class="badge bg-warning-subtle text-warning-emphasis px-3 py-1 mb-2 fw-semibold">
                         <i class="bi bi-shield-check me-1"></i> Organización Social Verificada
                     </span>
-                    <h1 class="h3 fw-bold mb-1" style="color: #1A202C;">Hogar Infantil Azul Wasi</h1>
+                    <h1 class="h3 fw-bold mb-1" style="color: #1A202C;">{{ $organizacionActual->nombre ?? (Auth::user()->name ?? 'Organización Social') }}</h1>
                     <p class="text-muted small mb-0">
-                        RUC: 20601234567 • San Jerónimo / Oropesa, Cusco • Acreditación Social 2026
+                        RUC: {{ $organizacionActual->ruc ?? '20608912345' }} • {{ $organizacionActual->distrito ?? 'Cusco Centro' }}{{ !empty($organizacionActual->direccion) ? ' • ' . $organizacionActual->direccion : '' }} • Acreditación Social 2026
                     </p>
                 </div>
                 <div class="mt-3 mt-md-0">
@@ -294,7 +294,7 @@
                 <div class="row g-2 mb-3">
                     <div class="col-sm-6">
                         <label class="form-label small fw-bold">Organización / ONG *</label>
-                        <input type="text" class="form-control" name="ong" value="Hogar Infantil Azul Wasi" required>
+                        <input type="text" class="form-control" name="ong" value="{{ $organizacionActual->nombre ?? (Auth::user()->name ?? '') }}" required>
                     </div>
                     <div class="col-sm-6">
                         <label class="form-label small fw-bold">Distrito *</label>

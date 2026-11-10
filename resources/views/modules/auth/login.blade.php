@@ -126,6 +126,21 @@
                         <a href="{{ route('registro-organizacion') }}" class="small fw-bold" style="color: var(--color-acento);">Registro ONG</a>
                     </div>
                 </div>
+
+                <div class="mt-4 p-3 rounded bg-light border">
+                    <div class="small fw-bold text-secondary mb-2 d-flex align-items-center">
+                        <i class="bi bi-info-circle-fill text-primary me-2"></i> Cuentas Demo para Evaluación:
+                    </div>
+                    <div class="small text-muted mb-1">
+                        <strong>ONG Hanpinawasi:</strong> <code>ong@hanpinawasitravel.com</code> / <code>password123</code>
+                    </div>
+                    <div class="small text-muted mb-1">
+                        <strong>ONG Azul Wasi:</strong> <code>contacto@azulwasi.org</code> / <code>password123</code>
+                    </div>
+                    <div class="small text-muted">
+                        <strong>Estudiante:</strong> <code>voluntario@continental.edu.pe</code> / <code>password123</code>
+                    </div>
+                </div>
             </div>
         </div>
     </main>

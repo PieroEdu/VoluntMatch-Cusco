@@ -25,6 +25,24 @@ class DatabaseSeeder extends Seeder
             ]
         );
 
+        // Cuenta de acceso para la ONG Hanpinawasi Cusco
+        $userHanpinawasi = User::updateOrCreate(
+            ['email' => 'ong@hanpinawasitravel.com'],
+            [
+                'name' => 'Asociación Civil Hanpinawasi Cusco',
+                'password' => Hash::make('password123'),
+            ]
+        );
+
+        // Cuenta de acceso para la ONG Hogar Infantil Azul Wasi
+        $userAzulWasi = User::updateOrCreate(
+            ['email' => 'contacto@azulwasi.org'],
+            [
+                'name' => 'Hogar Infantil Azul Wasi',
+                'password' => Hash::make('password123'),
+            ]
+        );
+
         // 2. Crear Organizaciones de Cusco
         $org1 = Organizacion::updateOrCreate(
             ['nombre' => 'Hogar Infantil Azul Wasi'],
@@ -100,6 +118,19 @@ class DatabaseSeeder extends Seeder
                 'telefono' => '984444555',
                 'correo' => 'red@cuscoactivo.pe',
                 'tipo' => 'Red Comunitaria',
+                'verificada' => true,
+            ]
+        );
+
+        $orgHanpinawasi = Organizacion::updateOrCreate(
+            ['nombre' => 'Asociación Civil Hanpinawasi Cusco'],
+            [
+                'ruc' => '20608912345',
+                'distrito' => 'Cusco Centro',
+                'direccion' => 'Calle Plateros 312, Centro Histórico, Cusco',
+                'telefono' => '930782790',
+                'correo' => 'ong@hanpinawasitravel.com',
+                'tipo' => 'Asociación Civil / ONG',
                 'verificada' => true,
             ]
         );
@@ -219,7 +250,28 @@ class DatabaseSeeder extends Seeder
             ]
         );
 
-        // 4. Crear postulación de ejemplo
+        $opHanpinawasi = Oportunidad::updateOrCreate(
+            ['titulo' => 'Reforestación de Queñuales y Ayni Comunitario'],
+            [
+                'organizacion_id' => $orgHanpinawasi->id,
+                'ong' => 'Asociación Civil Hanpinawasi Cusco',
+                'distrito' => 'Cusco Centro',
+                'latitud' => -13.5167,
+                'longitud' => -71.9789,
+                'categoria' => 'Medio Ambiente',
+                'clase_insignia' => 'badge-ambiente',
+                'modalidad' => 'Presencial',
+                'horario' => 'Sábados y Domingos 7:00 AM - 1:00 PM',
+                'cupos' => 8,
+                'cupos_restantes' => 8,
+                'imagen' => 'https://images.unsplash.com/photo-1589802829985-817e51171b92?auto=format&fit=crop&w=1200&h=630&q=85',
+                'descripcion' => 'Iniciativa socioambiental de la ONG Hanpinawasi vinculada a la Nación Q\'ero y comunidades de los Andes cusqueños. Apoya en la reforestación de queñuales nativos (Polylepis), jornadas de concientización ecológica, salud básica preventiva y transmisión de saberes ancestrales bajo el principio sagrado del Ayni.',
+                'habilidades' => ['Reforestación', 'Educación ambiental', 'Trabajo en equipo', 'Resistencia física', 'Sensibilidad intercultural'],
+                'destacada' => true,
+            ]
+        );
+
+        // 4. Crear postulaciones de ejemplo
         Postulacion::updateOrCreate(
             [
                 'oportunidad_id' => $op1->id,
@@ -235,6 +287,24 @@ class DatabaseSeeder extends Seeder
                 'estado' => 'Aceptado',
                 'horas_acumuladas' => 8,
                 'fecha' => '2026-10-04',
+            ]
+        );
+
+        Postulacion::updateOrCreate(
+            [
+                'oportunidad_id' => $opHanpinawasi->id,
+                'correo' => 'voluntario.ambiental@continental.edu.pe',
+            ],
+            [
+                'user_id' => null,
+                'estudiante' => 'Patrick Choquemamani',
+                'telefono' => '984777123',
+                'carrera' => 'Ingeniería Ambiental',
+                'universidad' => 'Universidad Continental (Sede Cusco)',
+                'mensaje_motivacion' => 'Deseo participar en las jornadas de reforestación de queñuales y aprender sobre las prácticas ancestrales de la Nación Q\'ero.',
+                'estado' => 'Pendiente',
+                'horas_acumuladas' => 0,
+                'fecha' => '2026-10-15',
             ]
         );
     }

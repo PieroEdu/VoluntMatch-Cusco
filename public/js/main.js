@@ -120,6 +120,23 @@ const OPORTUNIDADES_INICIALES = [
         descripcion: "Actualización de contenidos, soporte a servidores web y mejora de accesibilidad en el portal informativo de la red de colectivos de Cusco.",
         habilidades: ["HTML5", "CSS3", "JavaScript", "GitHub"],
         destacada: false
+    },
+    {
+        id: "op-007",
+        titulo: "Reforestación de Queñuales y Ayni Comunitario",
+        ong: "Asociación Civil Hanpinawasi Cusco",
+        distrito: "Cusco Centro",
+        categoria: "Medio Ambiente",
+        claseInsignia: "badge-ambiente",
+        badgeClase: "badge-ambiente",
+        modalidad: "Presencial",
+        horario: "Sábados y Domingos 7:00 AM - 1:00 PM",
+        cupos: 8,
+        cuposRestantes: 8,
+        imagen: "https://images.unsplash.com/photo-1589802829985-817e51171b92?auto=format&fit=crop&w=1200&h=630&q=85",
+        descripcion: "Iniciativa socioambiental de la ONG Hanpinawasi vinculada a la Nación Q'ero y comunidades de los Andes cusqueños. Apoya en la reforestación de queñuales nativos (Polylepis), jornadas de concientización ecológica, salud básica preventiva y transmisión de saberes ancestrales bajo el principio sagrado del Ayni.",
+        habilidades: ["Reforestación", "Educación ambiental", "Trabajo en equipo", "Resistencia física", "Sensibilidad intercultural"],
+        destacada: true
     }
 ];
 
