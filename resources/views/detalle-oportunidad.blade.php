@@ -254,7 +254,7 @@
                     <i class="bi bi-people-fill text-success fs-3 me-2"></i>
                     <h4 class="mb-0 text-white">VoluntMatch Cusco</h4>
                 </div>
-                <p class="text-muted small">
+                <p class="small text-white">
                     Plataforma universitaria orientada a la democratización del voluntariado en Cusco.
                 </p>
             </div>
@@ -269,12 +269,31 @@
             </div>
             <div class="footer-col">
                 <h4>Universidad Continental</h4>
-                <p class="small text-muted">Cusco, Perú, 2026</p>
+                <p class="small text-white mb-2">Ingeniería de Sistemas e Informática</p>
+                <p class="small text-white mb-2">Asignatura: Programación Web</p>
+                <p class="small text-white">Cusco, Perú, 2026</p>
+            </div>
+            <div class="footer-col">
+                <h4><i class="bi bi-people-fill text-success me-1"></i> Creadores</h4>
+                <ul class="creadores-lista">
+                    <li><span>Piero Edu Alcca Moron</span> <span class="badge-porcentaje">100%</span></li>
+                    <li><span>Luis Angel Dueñas Quintana</span> <span class="badge-porcentaje">100%</span></li>
+                    <li><span>Patrick Antonio Leguia Choquemamani</span> <span class="badge-porcentaje">100%</span></li>
+                    <li><span>Alexis Sebastian Rojas Lopez</span> <span class="badge-porcentaje">100%</span></li>
+                </ul>
             </div>
         </div>
 
         <div class="footer-creditos">
-            <p>© 2026 VoluntMatch Cusco. Desarrollado por el Grupo 6. Licencia MIT.</p>
+            <div class="footer-creadores-banner">
+                <i class="bi bi-award-fill text-success me-1"></i>
+                <strong>Creadores del Proyecto:</strong>
+                <span>Piero Edu Alcca Moron <strong>100%</strong></span> •
+                <span>Luis Angel Dueñas Quintana <strong>100%</strong></span> •
+                <span>Patrick Antonio Leguia Choquemamani <strong>100%</strong></span> •
+                <span>Alexis Sebastian Rojas Lopez <strong>100%</strong></span>
+            </div>
+            <p class="mb-0 text-white">© 2026 VoluntMatch Cusco. Desarrollado por el Grupo 6. Universidad Continental. Licencia MIT.</p>
         </div>
     </footer>
 

@@ -4,8 +4,12 @@ namespace App\Http\Controllers;
 
 use App\Models\Oportunidad;
 use App\Models\Postulacion;
+use App\Notifications\PostulacionConfirmadaNotification;
+use App\Notifications\PostulacionEstadoActualizadoNotification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Notification;
 
 class PostulacionController extends Controller
 {
@@ -70,6 +74,14 @@ class PostulacionController extends Controller
             $oportunidad->decrement('cupos_restantes');
         }
 
+        // Notificar al voluntario por correo electrónico (API de Notificaciones Transaccionales)
+        try {
+            Notification::route('mail', $postulacion->correo)
+                ->notify(new PostulacionConfirmadaNotification($postulacion));
+        } catch (\Throwable $e) {
+            Log::warning('No se pudo enviar la notificación de postulación: ' . $e->getMessage());
+        }
+
         if ($request->expectsJson() || $request->ajax()) {
             return response()->json([
                 'success' => true,
@@ -129,6 +141,14 @@ class PostulacionController extends Controller
         }
 
         $postulacion->save();
+
+        // Notificar al voluntario sobre el cambio de estado (Aceptado / Rechazado)
+        try {
+            Notification::route('mail', $postulacion->correo)
+                ->notify(new PostulacionEstadoActualizadoNotification($postulacion));
+        } catch (\Throwable $e) {
+            Log::warning('No se pudo enviar la notificación de cambio de estado: ' . $e->getMessage());
+        }
 
         if ($request->expectsJson() || $request->ajax()) {
             return response()->json([

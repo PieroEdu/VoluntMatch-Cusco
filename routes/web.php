@@ -23,6 +23,8 @@ Route::post('/postular', [PostulacionController::class, 'store'])->name('postula
 
 // APIs JSON para sincronización
 Route::get('/api/oportunidades', [OportunidadController::class, 'apiListar'])->name('api.oportunidades');
+Route::get('/api/oportunidades/mapa', [OportunidadController::class, 'apiMapa'])->name('api.oportunidades.mapa');
+
 Route::get('/api/postulaciones', [PostulacionController::class, 'apiListar'])->name('api.postulaciones');
 
 // Rutas de Autenticación (Solo Invitados)

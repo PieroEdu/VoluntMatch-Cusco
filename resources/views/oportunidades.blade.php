@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
@@ -12,6 +12,9 @@
     <link rel="stylesheet" href="[https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css](https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css)">
     <!-- Hoja de estilos principal -->
     <link rel="stylesheet" href="{{ asset('css/styles.css') }}">
+    <!-- Leaflet Map CSS (API de Mapas OpenStreetMap) -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+
 </head>
 <body>
 
@@ -142,7 +145,30 @@
                     </div>
                 </aside>
 
-                <section>
+                <section class="flex-grow-1">
+                    <!-- Selector de Vista: Cuadrícula o Mapa Interactivo -->
+                    <div class="d-flex justify-content-between align-items-center mb-3 p-2 bg-white rounded border">
+                        <span class="small fw-semibold text-muted ms-2">
+                            <i class="bi bi-geo-alt text-success me-1"></i> Visualización de Convocatorias:
+                        </span>
+                        <div class="btn-group btn-group-sm" role="group">
+                            <button type="button" id="btn-vista-lista" class="btn btn-success active" onclick="cambiarVistaCatalogo('lista')">
+                                <i class="bi bi-grid-fill me-1"></i> Lista
+                            </button>
+                            <button type="button" id="btn-vista-mapa" class="btn btn-outline-success" onclick="cambiarVistaCatalogo('mapa')">
+                                <i class="bi bi-map-fill me-1"></i> Mapa Cusco (API)
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Contenedor del Mapa Interactivo (Leaflet + Nominatim OpenStreetMap) -->
+                    <div id="contenedor-mapa" class="mb-4 rounded border bg-light" style="display: none; height: 520px; width: 100%; position: relative; z-index: 1;">
+                        <div class="d-flex justify-content-center align-items-center h-100 text-muted" id="mapa-cargando">
+                            <div class="spinner-border spinner-border-sm text-success me-2" role="status"></div>
+                            <span>Cargando mapa interactivo de Cusco...</span>
+                        </div>
+                    </div>
+
                     <div class="grid-oportunidades" id="grid-catalogo">
                         <!-- Carga dinámica -->
                     </div>
@@ -160,7 +186,7 @@
                     <i class="bi bi-people-fill text-success fs-3 me-2"></i>
                     <h4 class="mb-0 text-white">VoluntMatch Cusco</h4>
                 </div>
-                <p class="text-muted small">
+                <p class="small text-white">
                     Canalizando el talento de estudiantes universitarios hacia causas que transforman nuestra comunidad.
                 </p>
             </div>
@@ -175,12 +201,31 @@
             </div>
             <div class="footer-col">
                 <h4>Universidad Continental</h4>
-                <p class="small text-muted">Perú, Cusco, 2026</p>
+                <p class="small text-white mb-2">Ingeniería de Sistemas e Informática</p>
+                <p class="small text-white mb-2">Asignatura: Programación Web</p>
+                <p class="small text-white">Perú, Cusco, 2026</p>
+            </div>
+            <div class="footer-col">
+                <h4><i class="bi bi-people-fill text-success me-1"></i> Creadores</h4>
+                <ul class="creadores-lista">
+                    <li><span>Piero Edu Alcca Moron</span> <span class="badge-porcentaje">100%</span></li>
+                    <li><span>Luis Angel Dueñas Quintana</span> <span class="badge-porcentaje">100%</span></li>
+                    <li><span>Patrick Antonio Leguia Choquemamani</span> <span class="badge-porcentaje">100%</span></li>
+                    <li><span>Alexis Sebastian Rojas Lopez</span> <span class="badge-porcentaje">100%</span></li>
+                </ul>
             </div>
         </div>
 
         <div class="footer-creditos">
-            <p>© 2026 VoluntMatch Cusco. Desarrollado por el Grupo 6. Licencia MIT.</p>
+            <div class="footer-creadores-banner">
+                <i class="bi bi-award-fill text-success me-1"></i>
+                <strong>Creadores del Proyecto:</strong>
+                <span>Piero Edu Alcca Moron <strong>100%</strong></span> •
+                <span>Luis Angel Dueñas Quintana <strong>100%</strong></span> •
+                <span>Patrick Antonio Leguia Choquemamani <strong>100%</strong></span> •
+                <span>Alexis Sebastian Rojas Lopez <strong>100%</strong></span>
+            </div>
+            <p class="mb-0 text-white">© 2026 VoluntMatch Cusco. Desarrollado por el Grupo 6. Universidad Continental. Licencia MIT.</p>
         </div>
     </footer>
 
@@ -188,5 +233,92 @@
     <script src="[https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js](https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js)"></script>
     <!-- Script Principal -->
     <script src="{{ asset('js/main.js') }}"></script>
+    <!-- Leaflet JS & Inicialización del Mapa Interactivo -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+    <script>
+        let mapaCusco = null;
+        let marcadoresCapa = null;
+
+        function cambiarVistaCatalogo(modo) {
+            const btnLista = document.getElementById('btn-vista-lista');
+            const btnMapa = document.getElementById('btn-vista-mapa');
+            const gridCatalogo = document.getElementById('grid-catalogo');
+            const contenedorMapa = document.getElementById('contenedor-mapa');
+
+            if (modo === 'mapa') {
+                btnLista.classList.remove('btn-success', 'active');
+                btnLista.classList.add('btn-outline-success');
+                btnMapa.classList.remove('btn-outline-success');
+                btnMapa.classList.add('btn-success', 'active');
+
+                gridCatalogo.style.display = 'none';
+                contenedorMapa.style.display = 'block';
+
+                if (!mapaCusco) {
+                    inicializarMapaCusco();
+                } else {
+                    setTimeout(() => mapaCusco.invalidateSize(), 200);
+                }
+            } else {
+                btnMapa.classList.remove('btn-success', 'active');
+                btnMapa.classList.add('btn-outline-success');
+                btnLista.classList.remove('btn-outline-success');
+                btnLista.classList.add('btn-success', 'active');
+
+                contenedorMapa.style.display = 'none';
+                gridCatalogo.style.display = 'grid';
+            }
+        }
+
+        async function inicializarMapaCusco() {
+            try {
+                // Coordenadas centrales de Cusco: Plaza de Armas
+                mapaCusco = L.map('contenedor-mapa').setView([-13.517088, -71.978535], 13);
+
+                // Capa de OpenStreetMap
+                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                    maxZoom: 19,
+                    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors | VoluntMatch Cusco'
+                }).addTo(mapaCusco);
+
+                marcadoresCapa = L.layerGroup().addTo(mapaCusco);
+
+                // Consultar API JSON de oportunidades con coordenadas
+                const response = await fetch("{{ route('api.oportunidades.mapa') }}");
+                const resData = await response.json();
+
+                const cargandoEl = document.getElementById('mapa-cargando');
+                if (cargandoEl) cargandoEl.remove();
+
+                if (resData.success && resData.oportunidades.length > 0) {
+                    resData.oportunidades.forEach(op => {
+                        const popupContent = `
+                            <div style="font-family: inherit; min-width: 200px;">
+                                <span class="badge ${op.clase_insignia || 'bg-success'} mb-1">${op.categoria}</span>
+                                <h6 style="margin: 4px 0 2px 0; font-weight: 700; color: #1a202c;">${op.titulo}</h6>
+                                <p style="margin: 0 0 6px 0; font-size: 12px; color: #4a5568;">
+                                    <i class="bi bi-building"></i> ${op.ong}<br>
+                                    <i class="bi bi-geo-alt"></i> ${op.distrito} | <i class="bi bi-people"></i> ${op.cupos_restantes} cupos
+                                </p>
+                                <a href="${op.url_detalle}" class="btn btn-sm btn-success text-white py-1 px-2 w-100" style="font-size: 11px; text-decoration: none;">
+                                    Ver Detalle y Postular &rarr;
+                                </a>
+                            </div>
+                        `;
+
+                        L.marker([op.lat, op.lng])
+                            .addTo(marcadoresCapa)
+                            .bindPopup(popupContent);
+                    });
+                }
+            } catch (err) {
+                console.error("Error al inicializar mapa:", err);
+                const contenedor = document.getElementById('contenedor-mapa');
+                if (contenedor) {
+                    contenedor.innerHTML = '<div class="alert alert-warning m-3">No se pudo cargar la API del mapa. Por favor, revisa la conexión.</div>';
+                }
+            }
+        }
+    </script>
 </body>
 </html>

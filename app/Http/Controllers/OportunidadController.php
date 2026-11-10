@@ -4,10 +4,17 @@ namespace App\Http\Controllers;
 
 use App\Models\Oportunidad;
 use App\Models\Organizacion;
+use App\Services\GeocodingService;
 use Illuminate\Http\Request;
 
 class OportunidadController extends Controller
 {
+    protected GeocodingService $geocodingService;
+
+    public function __construct(GeocodingService $geocodingService)
+    {
+        $this->geocodingService = $geocodingService;
+    }
     /**
      * Muestra el catálogo de oportunidades.
      */
@@ -88,10 +95,15 @@ class OportunidadController extends Controller
 
         $imagen = $validated['imagen'] ?? 'https://images.unsplash.com/photo-1559027615-cd4628902d4a?auto=format&fit=crop&w=600&q=80';
 
+        // Geocodificar ubicación con la API de Nominatim / Fallback distrital
+        $coords = $this->geocodingService->geocode($validated['distrito']);
+
         $oportunidad = Oportunidad::create([
             'titulo' => $validated['titulo'],
             'ong' => $validated['ong'],
             'distrito' => $validated['distrito'],
+            'latitud' => $coords['lat'],
+            'longitud' => $coords['lng'],
             'categoria' => $validated['categoria'],
             'clase_insignia' => $badgeClase,
             'modalidad' => $validated['modalidad'],
@@ -122,5 +134,39 @@ class OportunidadController extends Controller
     {
         $oportunidades = Oportunidad::all();
         return response()->json($oportunidades);
+    }
+
+    /**
+     * API JSON para alimentar el mapa interactivo de Leaflet.
+     * Retorna todas las oportunidades activas con sus coordenadas resueltas.
+     */
+    public function apiMapa()
+    {
+        $oportunidades = Oportunidad::all()->map(function ($op) {
+            $coords = $op->coordenadas_validas;
+
+            return [
+                'id'              => $op->id,
+                'titulo'          => $op->titulo,
+                'ong'             => $op->ong,
+                'distrito'        => $op->distrito,
+                'categoria'       => $op->categoria,
+                'clase_insignia'  => $op->clase_insignia,
+                'modalidad'       => $op->modalidad,
+                'horario'         => $op->horario,
+                'cupos_restantes' => $op->cupos_restantes,
+                'imagen'          => $op->imagen,
+                'lat'             => $coords['lat'],
+                'lng'             => $coords['lng'],
+                'url_detalle'     => route('detalle-oportunidad', ['id' => $op->id]),
+            ];
+        });
+
+        return response()->json([
+            'success'       => true,
+            'total'         => $oportunidades->count(),
+            'centro_cusco'  => ['lat' => -13.517088, 'lng' => -71.978535],
+            'oportunidades' => $oportunidades,
+        ]);
     }
 }
