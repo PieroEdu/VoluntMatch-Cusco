@@ -13,6 +13,14 @@ return new class extends Migration
     {
         Schema::create('organizacions', function (Blueprint $table) {
             $table->id();
+            $table->string('nombre');
+            $table->string('ruc', 11)->nullable();
+            $table->string('distrito')->default('Cusco');
+            $table->string('direccion')->nullable();
+            $table->string('telefono')->nullable();
+            $table->string('correo')->nullable();
+            $table->string('tipo')->default('ONG'); // ONG, Colectivo, Asociación
+            $table->boolean('verificada')->default(true);
             $table->timestamps();
         });
     }

@@ -1,6 +1,9 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\OportunidadController;
+use App\Http\Controllers\PostulacionController;
 use Illuminate\Support\Facades\Route;
 
 // Páginas Públicas
@@ -12,13 +15,15 @@ Route::get('/contacto', function () {
     return view('contacto');
 })->name('contacto');
 
-Route::get('/oportunidades', function () {
-    return view('oportunidades');
-})->name('oportunidades');
+Route::get('/oportunidades', [OportunidadController::class, 'index'])->name('oportunidades');
+Route::get('/detalle-oportunidad', [OportunidadController::class, 'show'])->name('detalle-oportunidad');
 
-Route::get('/detalle-oportunidad', function () {
-    return view('detalle-oportunidad');
-})->name('detalle-oportunidad');
+// Acciones de Postulación (Público / Estudiantes)
+Route::post('/postular', [PostulacionController::class, 'store'])->name('postulaciones.store');
+
+// APIs JSON para sincronización
+Route::get('/api/oportunidades', [OportunidadController::class, 'apiListar'])->name('api.oportunidades');
+Route::get('/api/postulaciones', [PostulacionController::class, 'apiListar'])->name('api.postulaciones');
 
 // Rutas de Autenticación (Solo Invitados)
 Route::middleware('guest')->group(function () {
@@ -31,9 +36,15 @@ Route::middleware('guest')->group(function () {
 
 // Rutas Protegidas (Solo Usuarios Autenticados)
 Route::middleware('auth')->group(function () {
-    Route::get('/home', [AuthController::class, 'home'])->name('home');
-    Route::get('/dashboard-organizacion', function () {
-        return view('dashboard/organizacion');
-    })->name('dashboard-organizacion');
+    Route::get('/home', [DashboardController::class, 'voluntario'])->name('home');
+    Route::get('/dashboard-organizacion', [DashboardController::class, 'organizacion'])->name('dashboard-organizacion');
+
+    // Gestión de Postulaciones (Cancelar y Cambiar Estado)
+    Route::delete('/postulaciones/{id}/cancelar', [PostulacionController::class, 'cancelar'])->name('postulaciones.cancelar');
+    Route::post('/postulaciones/{id}/estado', [PostulacionController::class, 'cambiarEstado'])->name('postulaciones.estado');
+
+    // Publicación de nuevas convocatorias
+    Route::post('/oportunidades/crear', [OportunidadController::class, 'store'])->name('oportunidades.store');
+
     Route::get('/logout', [AuthController::class, 'logout'])->name('logout');
 });

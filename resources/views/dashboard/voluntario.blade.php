@@ -33,6 +33,7 @@
                     <li><a href="{{ route('index') }}"><i class="bi bi-house-door"></i> Inicio</a></li>
                     <li><a href="{{ route('oportunidades') }}"><i class="bi bi-grid-fill"></i> Oportunidades</a></li>
                     <li><a href="{{ route('home') }}" class="activo"><i class="bi bi-speedometer2"></i> Mi Panel</a></li>
+                    <li><a href="{{ route('dashboard-organizacion') }}"><i class="bi bi-building"></i> Panel ONG</a></li>
                     <li><a href="{{ route('contacto') }}"><i class="bi bi-envelope"></i> Soporte</a></li>
                 </ul>
             </nav>
@@ -44,7 +45,7 @@
                         <span>{{ Auth::user()->name ?? 'Usuario' }}</span>
                     </button>
                     <ul class="dropdown-menu dropdown-menu-end shadow">
-                        <li><a class="dropdown-item" href="#"><i class="bi bi-person me-2"></i>Mi Perfil</a></li>
+                        <li><a class="dropdown-item" href="{{ route('home') }}"><i class="bi bi-person me-2"></i>Mi Perfil</a></li>
                         <li><hr class="dropdown-divider"></li>
                         <li><a class="dropdown-item text-danger" href="{{ route('logout') }}"><i class="bi bi-box-arrow-right me-2"></i>Cerrar Sesión</a></li>
                     </ul>
@@ -61,6 +62,20 @@
     <main class="py-4">
         <div class="container">
 
+            @if(session('success'))
+            <div class="alert alert-success alert-dismissible fade show rounded-3 mb-4 shadow-sm" role="alert">
+                <i class="bi bi-check-circle-fill me-2"></i> {{ session('success') }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+            @endif
+
+            @if(session('error'))
+            <div class="alert alert-danger alert-dismissible fade show rounded-3 mb-4 shadow-sm" role="alert">
+                <i class="bi bi-exclamation-triangle-fill me-2"></i> {{ session('error') }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+            @endif
+
             <!-- BANNER DE BIENVENIDA -->
             <div class="card border-0 shadow-sm rounded-4 mb-4 bg-white overflow-hidden">
                 <div class="card-body p-4 p-md-5 text-white position-relative" style="background: linear-gradient(135deg, #1B5E20 0%, #2E7D32 100%) !important;">
@@ -69,7 +84,7 @@
                             <span class="badge bg-white text-success fw-bold px-3 py-2 rounded-pill mb-2">
                                 <i class="bi bi-patch-check-fill text-success me-1"></i> Estudiante Voluntario Acreditado
                             </span>
-                            <h1 class="fw-bold display-6 mb-2">¡Hola, {{ strtoupper(Auth::user()->name ?? 'LUIS') }}!</h1>
+                            <h1 class="fw-bold display-6 mb-2">¡Hola, {{ strtoupper(Auth::user()->name ?? 'VOLUNTARIO') }}!</h1>
                             <p class="fs-6 opacity-90 mb-3">
                                 Ingeniería de Sistemas e Informática • Universidad Continental (Sede Cusco)
                             </p>
@@ -94,7 +109,7 @@
                             </div>
                             <div>
                                 <span class="text-muted small fw-semibold d-block">Horas Acumuladas</span>
-                                <h3 class="fw-bold mb-0 text-dark">8 hrs</h3>
+                                <h3 class="fw-bold mb-0 text-dark" id="metric-horas">{{ $horasAcumuladas ?? 0 }} hrs</h3>
                             </div>
                         </div>
                     </div>
@@ -108,7 +123,7 @@
                             </div>
                             <div>
                                 <span class="text-muted small fw-semibold d-block">Postulaciones Activas</span>
-                                <h3 class="fw-bold mb-0 text-dark">1</h3>
+                                <h3 class="fw-bold mb-0 text-dark" id="metric-postulaciones">{{ $postulacionesActivas ?? 0 }}</h3>
                             </div>
                         </div>
                     </div>
@@ -122,7 +137,7 @@
                             </div>
                             <div>
                                 <span class="text-muted small fw-semibold d-block">Causas en Cusco</span>
-                                <h3 class="fw-bold mb-0 text-dark">2</h3>
+                                <h3 class="fw-bold mb-0 text-dark">{{ $causasCusco ?? 6 }}</h3>
                             </div>
                         </div>
                     </div>
@@ -136,7 +151,7 @@
                             </div>
                             <div>
                                 <span class="text-muted small fw-semibold d-block">Certificados</span>
-                                <h3 class="fw-bold mb-0 text-success">1 Listo</h3>
+                                <h3 class="fw-bold mb-0 text-success">{{ $certificados ?? 0 }} Listo(s)</h3>
                             </div>
                         </div>
                     </div>
@@ -145,10 +160,15 @@
 
             <!-- MIS POSTULACIONES -->
             <div class="card border-0 shadow-sm rounded-4 mb-4 bg-white">
-                <div class="card-header bg-white border-0 pt-4 px-4 pb-0 d-flex justify-content-between align-items-center">
+                <div class="card-header bg-white border-0 pt-4 px-4 pb-0 d-flex justify-content-between align-items-center flex-wrap gap-2">
                     <div>
                         <h4 class="fw-bold text-dark mb-0"><i class="bi bi-journal-check text-success me-2"></i>Mis Postulaciones a Voluntariado</h4>
-                        <p class="text-muted small mb-0">Sincronizado en tiempo real</p>
+                        <p class="text-muted small mb-0">Listado actualizado de convocatorias a las que te has postulado</p>
+                    </div>
+                    <div>
+                        <a href="{{ route('oportunidades') }}" class="btn btn-sm btn-success rounded-pill px-3 fw-semibold">
+                            <i class="bi bi-plus-circle me-1"></i> Nueva Postulación
+                        </a>
                     </div>
                 </div>
                 <div class="card-body p-4">
@@ -164,22 +184,51 @@
                                     <th class="text-end">Acciones</th>
                                 </tr>
                             </thead>
-                            <tbody>
+                            <tbody id="tabla-mis-postulaciones-body">
+                                @forelse($postulaciones as $post)
                                 <tr>
                                     <td>
-                                        <div class="fw-bold text-dark">Tutorías y Reforzamiento Escolar</div>
-                                        <span class="badge bg-success bg-opacity-10 text-success">Educación</span>
+                                        <div class="fw-bold text-dark">{{ $post->oportunidad->titulo ?? 'Voluntariado Cusco' }}</div>
+                                        <span class="badge {{ $post->oportunidad->clase_insignia ?? 'badge-educacion' }}">{{ $post->oportunidad->categoria ?? 'General' }}</span>
                                     </td>
-                                    <td>Hogar Infantil Azul Wasi</td>
-                                    <td>04/10/2026</td>
+                                    <td>{{ $post->oportunidad->ong ?? 'Organización Social' }}</td>
+                                    <td>{{ $post->fecha ? \Carbon\Carbon::parse($post->fecha)->format('d/m/Y') : $post->created_at->format('d/m/Y') }}</td>
                                     <td>
-                                        <span class="badge bg-success text-white px-3 py-2 rounded-pill"><i class="bi bi-check-circle-fill me-1"></i> Aceptado</span>
+                                        @if($post->estado === 'Aceptado')
+                                            <span class="badge bg-success text-white px-3 py-2 rounded-pill"><i class="bi bi-check-circle-fill me-1"></i> Aceptado</span>
+                                        @elseif($post->estado === 'Rechazado')
+                                            <span class="badge bg-danger text-white px-3 py-2 rounded-pill"><i class="bi bi-x-circle-fill me-1"></i> Rechazado</span>
+                                        @else
+                                            <span class="badge bg-warning text-dark px-3 py-2 rounded-pill"><i class="bi bi-hourglass-split me-1"></i> Pendiente</span>
+                                        @endif
                                     </td>
-                                    <td>8 hrs</td>
+                                    <td>{{ $post->horas_acumuladas }} hrs</td>
                                     <td class="text-end">
-                                        <a href="{{ route('detalle-oportunidad') }}" class="btn btn-sm btn-outline-success rounded-pill fw-semibold"><i class="bi bi-eye"></i> Detalle</a>
+                                        <a href="{{ route('detalle-oportunidad', ['id' => $post->oportunidad_id]) }}" class="btn btn-sm btn-outline-success rounded-pill fw-semibold me-1"><i class="bi bi-eye"></i> Detalle</a>
+                                        @if($post->estado === 'Pendiente')
+                                        <form action="{{ route('postulaciones.cancelar', $post->id) }}" method="POST" class="d-inline form-cancelar-postulacion">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit" class="btn btn-sm btn-outline-danger rounded-pill fw-semibold" title="Cancelar Postulación" onclick="return confirm('¿Seguro que deseas cancelar esta postulación?');">
+                                                <i class="bi bi-trash"></i> Cancelar
+                                            </button>
+                                        </form>
+                                        @endif
                                     </td>
                                 </tr>
+                                @empty
+                                <tr>
+                                    <td colspan="6" class="text-center py-4 text-muted">
+                                        <i class="bi bi-inbox fs-2 d-block mb-2 text-secondary"></i>
+                                        Aún no tienes postulaciones registradas en tu cuenta.
+                                        <div class="mt-2">
+                                            <a href="{{ route('oportunidades') }}" class="btn btn-sm btn-success rounded-pill px-3">
+                                                <i class="bi bi-search me-1"></i> Explorar Convocatorias
+                                            </a>
+                                        </div>
+                                    </td>
+                                </tr>
+                                @endforelse
                             </tbody>
                         </table>
                     </div>
@@ -191,7 +240,7 @@
                 <h4 class="fw-bold text-dark mb-3"><i class="bi bi-stars text-warning me-2"></i>Recomendaciones según tu perfil (Sistemas e Informática)</h4>
                 
                 <div class="row row-cols-1 row-cols-md-2 g-4">
-                    <!-- Tarjeta 1 -->
+                    @forelse($recomendaciones as $rec)
                     <div class="col">
                         <div class="card border-0 shadow-sm rounded-4 h-100 p-3 bg-white">
                             <div class="d-flex align-items-start gap-3">
@@ -199,37 +248,22 @@
                                     <i class="bi bi-laptop text-success fs-1"></i>
                                 </div>
                                 <div class="flex-grow-1">
-                                    <span class="badge bg-info bg-opacity-10 text-info fw-bold mb-1">SISTEMAS</span>
-                                    <h5 class="fw-bold text-dark mb-1">Digitalización e Inventario de Donaciones</h5>
-                                    <p class="text-muted small mb-2"><i class="bi bi-building me-1"></i> Asociación Verde Cusco • Wanchaq</p>
+                                    <span class="badge bg-info bg-opacity-10 text-info fw-bold mb-1">{{ strtoupper($rec->categoria) }}</span>
+                                    <h5 class="fw-bold text-dark mb-1">{{ $rec->titulo }}</h5>
+                                    <p class="text-muted small mb-2"><i class="bi bi-building me-1"></i> {{ $rec->ong }} • {{ $rec->distrito }}</p>
                                     <div class="d-flex justify-content-between align-items-center">
-                                        <span class="text-success small fw-semibold"><i class="bi bi-people-fill"></i> 1 cupo disponible</span>
-                                        <a href="{{ route('detalle-oportunidad') }}" class="btn btn-sm btn-success px-3 rounded-pill fw-semibold">Ver</a>
+                                        <span class="text-success small fw-semibold"><i class="bi bi-people-fill"></i> {{ $rec->cupos_restantes }} cupos disponibles</span>
+                                        <a href="{{ route('detalle-oportunidad', ['id' => $rec->id]) }}" class="btn btn-sm btn-success px-3 rounded-pill fw-semibold">Postular</a>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-
-                    <!-- Tarjeta 2 -->
-                    <div class="col">
-                        <div class="card border-0 shadow-sm rounded-4 h-100 p-3 bg-white">
-                            <div class="d-flex align-items-start gap-3">
-                                <div class="rounded-3 bg-light p-3 text-center" style="min-width: 70px;">
-                                    <i class="bi bi-code-slash text-success fs-1"></i>
-                                </div>
-                                <div class="flex-grow-1">
-                                    <span class="badge bg-info bg-opacity-10 text-info fw-bold mb-1">SISTEMAS</span>
-                                    <h5 class="fw-bold text-dark mb-1">Soporte y Mantenimiento Web Comunitario</h5>
-                                    <p class="text-muted small mb-2"><i class="bi bi-building me-1"></i> Red Social Cusco Activo • Centro</p>
-                                    <div class="d-flex justify-content-between align-items-center">
-                                        <span class="text-success small fw-semibold"><i class="bi bi-people-fill"></i> 2 cupos disponibles</span>
-                                        <a href="{{ route('detalle-oportunidad') }}" class="btn btn-sm btn-success px-3 rounded-pill fw-semibold">Ver</a>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                    @empty
+                    <div class="col-12">
+                        <p class="text-muted">No hay recomendaciones adicionales en este momento.</p>
                     </div>
+                    @endforelse
                 </div>
             </div>
 
@@ -280,17 +314,5 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="{{ asset('js/main.js') }}"></script>
     <script src="{{ asset('js/validaciones.js') }}"></script>
-
-    @if(session('login_success'))
-    <script>
-        Swal.fire({
-            icon: 'success',
-            title: '¡Bienvenido!',
-            text: "{{ session('login_success') }}",
-            timer: 2000,
-            showConfirmButton: false
-        });
-    </script>
-    @endif
 </body>
 </html>

@@ -126,18 +126,49 @@ const OPORTUNIDADES_INICIALES = [
 const OPORTUNIDADES_CUSCO_INICIALES = OPORTUNIDADES_INICIALES;
 
 /**
- * Guarda datos iniciales en localStorage.
+ * Guarda datos iniciales en localStorage y sincroniza con la API de Laravel.
  */
-function inicializarDatos() {
+async function inicializarDatos() {
     try {
         if (!localStorage.getItem(CLAVES_ALMACENAMIENTO.OPORTUNIDADES)) {
             localStorage.setItem(CLAVES_ALMACENAMIENTO.OPORTUNIDADES, JSON.stringify(OPORTUNIDADES_INICIALES));
         }
+
+        // Sincronizar catálogo con la base de datos de Laravel
+        try {
+            const respuesta = await fetch('/api/oportunidades');
+            if (respuesta.ok) {
+                const datos = await respuesta.json();
+                if (datos && datos.length > 0) {
+                    const opsNormalizadas = datos.map(item => ({
+                        id: item.id,
+                        titulo: item.titulo,
+                        ong: item.ong,
+                        distrito: item.distrito,
+                        categoria: item.categoria,
+                        claseInsignia: item.clase_insignia || 'badge-educacion',
+                        badgeClase: item.clase_insignia || 'badge-educacion',
+                        modalidad: item.modalidad || 'Presencial',
+                        horario: item.horario || 'Flexible',
+                        cupos: item.cupos,
+                        cuposRestantes: item.cupos_restantes,
+                        imagen: item.imagen,
+                        descripcion: item.descripcion,
+                        habilidades: Array.isArray(item.habilidades) ? item.habilidades : (typeof item.habilidades === 'string' ? JSON.parse(item.habilidades) : []),
+                        destacada: Boolean(item.destacada)
+                    }));
+                    localStorage.setItem(CLAVES_ALMACENAMIENTO.OPORTUNIDADES, JSON.stringify(opsNormalizadas));
+                }
+            }
+        } catch (apiErr) {
+            console.info("Usando catálogo local offline:", apiErr);
+        }
+
         if (!localStorage.getItem(CLAVES_ALMACENAMIENTO.POSTULACIONES)) {
             const postulacionEjemplo = [
                 {
                     id: "post-001",
-                    oportunidadId: "op-001",
+                    oportunidadId: 1,
                     titulo: "Tutorías y Reforzamiento Escolar",
                     ong: "Hogar Infantil Azul Wasi",
                     fecha: "2026-10-04",
@@ -148,6 +179,10 @@ function inicializarDatos() {
             ];
             localStorage.setItem(CLAVES_ALMACENAMIENTO.POSTULACIONES, JSON.stringify(postulacionEjemplo));
         }
+    } catch (error) {
+        console.warn("No se pudo acceder al almacenamiento local:", error);
+    }
+}
     } catch (error) {
         console.warn("No se pudo acceder al almacenamiento local:", error);
     }
@@ -303,48 +338,50 @@ function configurarDetalleOportunidad() {
     if (!contenedor) return;
 
     const parametros = new URLSearchParams(window.location.search);
-    const identificador = parametros.get('id') || 'op-001';
+    const identificador = parametros.get('id') || (contenedor ? contenedor.getAttribute('data-id') : '1');
 
     const lista = obtenerOportunidades();
-    const seleccionada = lista.find(item => item.id === identificador) || lista[0];
+    const seleccionada = lista.find(item => String(item.id) === String(identificador) || item.id === identificador) || lista[0];
 
     const elemTitulo = document.getElementById('detalle-titulo');
     const elemOng = document.getElementById('detalle-ong');
     const elemDistrito = document.getElementById('detalle-distrito');
-
-    if (elemTitulo) elemTitulo.textContent = seleccionada.titulo;
-    if (elemOng) elemOng.textContent = seleccionada.ong;
-    if (elemDistrito) elemDistrito.textContent = `${seleccionada.distrito}, Cusco`;
-
     const elementoCategoria = document.getElementById('detalle-categoria');
-    if (elementoCategoria) {
-        elementoCategoria.textContent = seleccionada.categoria;
-        elementoCategoria.className = `badge-categoria ${seleccionada.claseInsignia || seleccionada.badgeClase}`;
-    }
-
     const elemDesc = document.getElementById('detalle-descripcion');
     const elemHorario = document.getElementById('detalle-horario');
     const elemModalidad = document.getElementById('detalle-modalidad');
     const elemCupos = document.getElementById('detalle-cupos');
-
-    if (elemDesc) elemDesc.textContent = seleccionada.descripcion;
-    if (elemHorario) elemHorario.textContent = seleccionada.horario;
-    if (elemModalidad) elemModalidad.textContent = seleccionada.modalidad;
-    if (elemCupos) elemCupos.textContent = `${seleccionada.cuposRestantes} cupos de ${seleccionada.cupos} totales`;
-
     const imagen = document.getElementById('detalle-imagen');
-    if (imagen) imagen.src = seleccionada.imagen;
-
     const listaHabilidades = document.getElementById('detalle-habilidades-lista');
-    if (listaHabilidades) {
-        listaHabilidades.innerHTML = seleccionada.habilidades
-            .map(habilidad => `<li class="item-habilidad"><i class="bi bi-check-circle-fill" style="color: var(--color-primario, #2E7D32); margin-right: 4px;"></i>${habilidad}</li>`)
-            .join('');
+
+    if (seleccionada) {
+        if (elemTitulo && (!elemTitulo.textContent || elemTitulo.textContent.includes('Cargando'))) elemTitulo.textContent = seleccionada.titulo;
+        if (elemOng && (!elemOng.textContent || elemOng.textContent.includes('Organización'))) elemOng.textContent = seleccionada.ong;
+        if (elemDistrito && (!elemDistrito.textContent || elemDistrito.textContent.includes('Cusco'))) elemDistrito.textContent = `${seleccionada.distrito}, Cusco`;
+
+        if (elementoCategoria && (!elementoCategoria.textContent || elementoCategoria.textContent.includes('Categoría'))) {
+            elementoCategoria.textContent = seleccionada.categoria;
+            elementoCategoria.className = `badge-categoria ${seleccionada.claseInsignia || seleccionada.badgeClase || 'badge-educacion'}`;
+        }
+
+        if (elemDesc && (!elemDesc.textContent || elemDesc.textContent.includes('Cargando'))) elemDesc.textContent = seleccionada.descripcion;
+        if (elemHorario && (!elemHorario.textContent || elemHorario.textContent.includes('definir'))) elemHorario.textContent = seleccionada.horario;
+        if (elemModalidad && (!elemModalidad.textContent || elemModalidad.textContent.includes('Presencial'))) elemModalidad.textContent = seleccionada.modalidad;
+        if (elemCupos && (!elemCupos.textContent || elemCupos.textContent.includes('Cargando'))) elemCupos.textContent = `${seleccionada.cuposRestantes} cupos de ${seleccionada.cupos} totales`;
+
+        if (imagen && (!imagen.getAttribute('src') || imagen.getAttribute('src') === '')) imagen.src = seleccionada.imagen;
+
+        if (listaHabilidades && listaHabilidades.children.length === 0 && Array.isArray(seleccionada.habilidades)) {
+            listaHabilidades.innerHTML = seleccionada.habilidades
+                .map(habilidad => `<li class="item-habilidad"><i class="bi bi-check-circle-fill" style="color: var(--color-primario, #2E7D32); margin-right: 4px;"></i>${habilidad}</li>`)
+                .join('');
+        }
     }
 
     const botonAbrir = document.getElementById('btn-abrir-postulacion');
     const modal = document.getElementById('modal-postulacion');
     const botonCerrar = document.getElementById('btn-cerrar-modal');
+    const botonCancelar = document.getElementById('btn-cancelar-modal');
     const formulario = document.getElementById('form-postulacion-rapida');
 
     if (botonAbrir && modal) {
@@ -353,6 +390,9 @@ function configurarDetalleOportunidad() {
     if (botonCerrar && modal) {
         botonCerrar.addEventListener('click', () => modal.classList.remove('activo'));
     }
+    if (botonCancelar && modal) {
+        botonCancelar.addEventListener('click', () => modal.classList.remove('activo'));
+    }
     if (modal) {
         modal.addEventListener('click', (evento) => {
             if (evento.target === modal) modal.classList.remove('activo');
@@ -360,45 +400,120 @@ function configurarDetalleOportunidad() {
     }
 
     if (formulario) {
-        formulario.addEventListener('submit', (evento) => {
+        formulario.addEventListener('submit', async (evento) => {
             evento.preventDefault();
             const campoNombre = document.getElementById('postulante-nombre');
             const campoCorreo = document.getElementById('postulante-correo');
-            const nombre = campoNombre ? campoNombre.value.trim() : 'Estudiante';
-            const correo = campoCorreo ? campoCorreo.value.trim() : '';
+            const campoTelefono = document.getElementById('postulante-telefono');
+            const campoCarrera = document.getElementById('postulante-carrera');
+            const campoMensaje = document.getElementById('postulante-mensaje');
+            const campoOpId = document.getElementById('postulante-oportunidad-id');
 
-            try {
-                let postulaciones = JSON.parse(localStorage.getItem(CLAVES_ALMACENAMIENTO.POSTULACIONES) || '[]');
-                postulaciones.push({
-                    id: 'post-' + Date.now(),
-                    oportunidadId: seleccionada.id,
-                    titulo: seleccionada.titulo,
-                    ong: seleccionada.ong,
-                    fecha: new Date().toISOString().split('T')[0],
-                    estado: 'Pendiente',
-                    estudiante: nombre,
-                    correo: correo,
-                    horasAcumuladas: 0
-                });
-                localStorage.setItem(CLAVES_ALMACENAMIENTO.POSTULACIONES, JSON.stringify(postulaciones));
-            } catch (error) {
-                console.error("Error al registrar postulación:", error);
+            const tokenMeta = document.querySelector('meta[name="csrf-token"]');
+            const csrfToken = tokenMeta ? tokenMeta.getAttribute('content') : '';
+
+            const opId = campoOpId ? campoOpId.value : (seleccionada ? seleccionada.id : 1);
+            const nombre = campoNombre ? campoNombre.value.trim() : '';
+            const correo = campoCorreo ? campoCorreo.value.trim() : '';
+            const telefono = campoTelefono ? campoTelefono.value.trim() : '';
+            const carrera = campoCarrera ? campoCarrera.value.trim() : '';
+            const mensaje = campoMensaje ? campoMensaje.value.trim() : '';
+
+            if (!nombre || !correo) {
+                if (typeof Swal !== 'undefined') {
+                    Swal.fire({
+                        icon: 'warning',
+                        title: 'Campos requeridos',
+                        text: 'Por favor ingresa tu nombre y correo electrónico.',
+                        confirmButtonColor: '#2E7D32'
+                    });
+                } else {
+                    alert('Por favor ingresa tu nombre y correo electrónico.');
+                }
+                return;
             }
 
-            modal.classList.remove('activo');
+            const formData = new FormData();
+            formData.append('oportunidad_id', opId);
+            formData.append('estudiante', nombre);
+            formData.append('correo', correo);
+            formData.append('telefono', telefono);
+            formData.append('carrera', carrera);
+            formData.append('mensaje_motivacion', mensaje);
+            if (csrfToken) formData.append('_token', csrfToken);
 
-            if (typeof Swal !== 'undefined') {
-                Swal.fire({
-                    icon: 'success',
-                    title: '¡Postulación Exitosa!',
-                    text: `Tu postulación a "${seleccionada.titulo}" ha sido enviada.`,
-                    confirmButtonColor: '#2E7D32'
-                }).then(() => {
-                    window.location.href = '/home';
+            const btnEnviar = document.getElementById('btn-enviar-postulacion');
+            if (btnEnviar) {
+                btnEnviar.disabled = true;
+                btnEnviar.innerHTML = '<span class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true"></span> Enviando...';
+            }
+
+            try {
+                const response = await fetch('/postular', {
+                    method: 'POST',
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest',
+                        'Accept': 'application/json',
+                    },
+                    body: formData
                 });
-            } else {
-                alert(`¡Felicitaciones ${nombre}!\nTu postulación fue registrada.`);
-                window.location.href = '/home';
+
+                const data = await response.json();
+
+                if (!response.ok || !data.success) {
+                    throw new Error(data.message || 'Error al procesar la postulación');
+                }
+
+                // Guardar en localStorage para respaldo local
+                try {
+                    let postulaciones = JSON.parse(localStorage.getItem(CLAVES_ALMACENAMIENTO.POSTULACIONES) || '[]');
+                    postulaciones.push({
+                        id: 'post-' + Date.now(),
+                        oportunidadId: opId,
+                        titulo: seleccionada ? seleccionada.titulo : 'Convocatoria Cusco',
+                        ong: seleccionada ? seleccionada.ong : 'Organización',
+                        fecha: new Date().toISOString().split('T')[0],
+                        estado: 'Pendiente',
+                        estudiante: nombre,
+                        correo: correo,
+                        horasAcumuladas: 0
+                    });
+                    localStorage.setItem(CLAVES_ALMACENAMIENTO.POSTULACIONES, JSON.stringify(postulaciones));
+                } catch (e) {
+                    console.warn('Error al guardar en localStorage:', e);
+                }
+
+                modal.classList.remove('activo');
+
+                if (typeof Swal !== 'undefined') {
+                    Swal.fire({
+                        icon: 'success',
+                        title: '¡Postulación Exitosa!',
+                        text: data.message || `Tu postulación ha sido enviada con éxito.`,
+                        confirmButtonColor: '#2E7D32'
+                    }).then(() => {
+                        window.location.href = '/home';
+                    });
+                } else {
+                    alert(`¡Felicitaciones ${nombre}!\nTu postulación fue registrada con éxito.`);
+                    window.location.href = '/home';
+                }
+            } catch (err) {
+                if (btnEnviar) {
+                    btnEnviar.disabled = false;
+                    btnEnviar.innerHTML = '<i class="bi bi-check2-circle me-1"></i> Confirmar y Postular';
+                }
+
+                if (typeof Swal !== 'undefined') {
+                    Swal.fire({
+                        icon: 'warning',
+                        title: 'Atención',
+                        text: err.message,
+                        confirmButtonColor: '#2E7D32'
+                    });
+                } else {
+                    alert(err.message);
+                }
             }
         });
     }

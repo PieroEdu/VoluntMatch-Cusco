@@ -36,12 +36,26 @@
             </nav>
 
             <div class="acciones-usuario">
+                @auth
+                <div class="dropdown">
+                    <button class="btn btn-outline-success dropdown-toggle d-flex align-items-center gap-2 fw-semibold" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="bi bi-person-circle fs-5"></i>
+                        <span>{{ Auth::user()->name }}</span>
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-end shadow">
+                        <li><a class="dropdown-item" href="{{ route('home') }}"><i class="bi bi-speedometer2 me-2"></i>Mi Panel</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item text-danger" href="{{ route('logout') }}"><i class="bi bi-box-arrow-right me-2"></i>Cerrar Sesión</a></li>
+                    </ul>
+                </div>
+                @else
                 <a href="{{ route('login') }}" class="btn-custom btn-outline-custom">
                     <i class="bi bi-box-arrow-in-right"></i> Ingresar
                 </a>
                 <a href="{{ route('registro-voluntario') }}" class="btn-custom btn-primary-custom">
                     <i class="bi bi-person-plus"></i> Registrarse
                 </a>
+                @endauth
             </div>
 
             <button class="boton-menu-movil" aria-label="Abrir menú de navegación">
