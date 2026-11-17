@@ -1,212 +1,167 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Registro de Voluntario - VoluntMatch Cusco</title>
-    <!-- Favicon -->
-    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%232E7D32'><path d='M7 14s-1 0-1-1 1-4 5-4 5 3 5 4-1 1-1 1zm4-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6m-5.784 6A2.24 2.24 0 0 1 5 13c0-1.355.68-2.75 1.936-3.72A6.3 6.3 0 0 0 5 9c-4 0-5 3-5 4s1 1 1 1zM4.5 8a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5'/></svg>">
-    <!-- Bootstrap 5 CSS (CDN) -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
-    <!-- Bootstrap Icons (CDN) -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-    <!-- Hoja de estilos principal -->
-    <link rel="stylesheet" href="{{ asset('css/styles.css') }}">
-</head>
-<body>
+@extends('layouts.app')
 
-    <!-- CABECERA PRINCIPAL -->
-    <header class="header-principal">
-        <div class="header-container">
-            <div class="logo-sitio">
-                <a href="{{ route('index') }}" class="d-flex align-items-center text-decoration-none">
-                    <i class="bi bi-people-fill me-2"></i>
-                    <span style="color: var(--color-primario); font-weight: 800;">VoluntMatch</span>
-                    <span class="logo-tag">Cusco</span>
-                </a>
+@section('content')
+<div class="fixed inset-0 pointer-events-none z-0">
+    <div class="absolute top-20 left-1/2 -translate-x-1/2 w-[700px] h-[400px] bg-brand-500/15 rounded-full blur-[160px]"></div>
+</div>
+
+<div class="relative z-10 py-12 px-6 max-w-xl mx-auto w-full">
+    <div class="glass-card p-8 rounded-3xl border border-slate-800 space-y-6">
+        
+        <div class="text-center space-y-2">
+            <div class="w-16 h-16 rounded-2xl bg-slate-950/90 border border-brand-500/40 p-2 flex items-center justify-center mx-auto mb-2 shadow-lg shadow-brand-500/20">
+                <img src="https://i.postimg.cc/43YJt89w/logo-removebg-preview.png" alt="VoluntMatch Cusco" class="w-full h-full object-contain">
+            </div>
+            <span class="inline-block px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider bg-brand-500/20 text-brand-400 border border-brand-500/30">
+                <i class="bi bi-person-heart me-1"></i> Comunidad Estudiantil
+            </span>
+            <h1 class="text-2xl sm:text-3xl font-black text-white">Registro de Voluntario</h1>
+            <p class="text-slate-400 text-xs">Convalida tus 100 horas de proyección social en la Región Cusco</p>
+        </div>
+
+        <form id="form-registro-voluntario" onsubmit="procesarRegistroVoluntario(event)" class="space-y-4">
+            @csrf
+            <input type="hidden" name="tipo_usuario" value="estudiante">
+
+            <div>
+                <label class="block text-xs font-bold text-slate-400 uppercase mb-1">Nombre Completo *</label>
+                <input type="text" name="name" required placeholder="Ej. Luis Fernando Quispe" class="w-full px-4 py-3 rounded-xl bg-slate-950 border border-slate-800 text-white text-xs focus:border-brand-500 focus:outline-none">
             </div>
 
-            <nav class="nav-principal">
-                <ul>
-                    <li><a href="{{ route('index') }}"><i class="bi bi-house-door"></i> Inicio</a></li>
-                    <li><a href="{{ route('oportunidades') }}"><i class="bi bi-grid-fill"></i> Oportunidades</a></li>
-                    <li><a href="{{ route('contacto') }}"><i class="bi bi-envelope"></i> Contacto</a></li>
-                    <li><a href="{{ route('index') }}#como-funciona"><i class="bi bi-info-circle"></i> Cómo Funciona</a></li>
-                </ul>
-            </nav>
-
-            <div class="acciones-usuario">
-                <a href="{{ route('login') }}" class="btn-custom btn-outline-custom">
-                    <i class="bi bi-box-arrow-in-right"></i> Ingresar
-                </a>
-                <a href="{{ route('registro-organizacion') }}" class="btn-custom btn-accent-custom" style="font-size: 0.85rem;">
-                    <i class="bi bi-building"></i> Soy ONG
-                </a>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-xs font-bold text-slate-400 uppercase mb-1">DNI (8 dígitos exactos) *</label>
+                    <input type="text" name="dni" id="vol_dni" oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 8)" required maxlength="8" minlength="8" pattern="[0-9]{8}" inputmode="numeric" placeholder="Ej. 74859612" class="w-full px-4 py-3 rounded-xl bg-slate-950 border border-slate-800 text-white font-mono text-xs focus:border-brand-500 focus:outline-none">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-400 uppercase mb-1">Carrera Profesional *</label>
+                    <select name="carrera" required class="w-full px-4 py-3 rounded-xl bg-slate-950 border border-slate-800 text-slate-300 text-xs focus:border-brand-500 focus:outline-none">
+                        <option value="Ingeniería de Sistemas">Ingeniería de Sistemas</option>
+                        <option value="Ingeniería Ambiental">Ingeniería Ambiental</option>
+                        <option value="Ingeniería Civil">Ingeniería Civil</option>
+                        <option value="Derecho">Derecho</option>
+                        <option value="Psicología">Psicología</option>
+                        <option value="Educación">Educación</option>
+                        <option value="Administración">Administración</option>
+                        <option value="Contabilidad">Contabilidad</option>
+                        <option value="Medicina / Enfermería">Medicina / Enfermería</option>
+                        <option value="Arquitectura">Arquitectura</option>
+                    </select>
+                </div>
             </div>
 
-            <button class="boton-menu-movil" aria-label="Abrir menú de navegación">
-                <i class="bi bi-list"></i>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-xs font-bold text-slate-400 uppercase mb-1">Teléfono / Celular</label>
+                    <input type="text" name="telefono" oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 9)" maxlength="9" placeholder="Ej. 984556677" class="w-full px-4 py-3 rounded-xl bg-slate-950 border border-slate-800 text-white text-xs focus:border-brand-500 focus:outline-none">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-400 uppercase mb-1">Distrito en Cusco</label>
+                    <select name="distrito" class="w-full px-4 py-3 rounded-xl bg-slate-950 border border-slate-800 text-slate-300 text-xs focus:border-brand-500 focus:outline-none">
+                        <option value="Cusco Centro">Cusco Centro</option>
+                        <option value="San Jerónimo">San Jerónimo</option>
+                        <option value="Wanchaq">Wanchaq</option>
+                        <option value="Santiago">Santiago</option>
+                        <option value="San Sebastián">San Sebastián</option>
+                    </select>
+                </div>
+            </div>
+
+            <div>
+                <label class="block text-xs font-bold text-slate-400 uppercase mb-1">Correo Institucional / Personal *</label>
+                <input type="email" name="email" required placeholder="estudiante@continental.edu.pe" class="w-full px-4 py-3 rounded-xl bg-slate-950 border border-slate-800 text-white text-xs focus:border-brand-500 focus:outline-none">
+            </div>
+
+            <div>
+                <label class="block text-xs font-bold text-slate-400 uppercase mb-1">Contraseña de Acceso *</label>
+                <input type="password" name="password" required minlength="6" placeholder="Mínimo 6 caracteres" class="w-full px-4 py-3 rounded-xl bg-slate-950 border border-slate-800 text-white text-xs focus:border-brand-500 focus:outline-none">
+            </div>
+
+            <!-- CONSENTIMIENTO LEGAL OBLIGATORIO (LEY N.° 29733) -->
+            <div class="p-3.5 rounded-2xl bg-slate-950/90 border border-slate-800">
+                <label class="flex items-start gap-2.5 cursor-pointer text-[11px] text-slate-300 leading-relaxed">
+                    <input type="checkbox" id="acepto_legal_vol" name="acepto_terminos" required class="mt-0.5 w-4 h-4 rounded border-slate-700 bg-slate-900 text-brand-500 focus:ring-brand-500">
+                    <span>
+                        He leído y acepto la <a href="{{ route('legal') }}#politica-privacidad" target="_blank" class="text-brand-400 font-bold hover:underline">Política de Privacidad</a> (Ley N.° 29733) y los <a href="{{ route('legal') }}#terminos-uso" target="_blank" class="text-brand-400 font-bold hover:underline">Términos de Uso</a> de VoluntMatch Cusco. *
+                    </span>
+                </label>
+            </div>
+
+            <button type="submit" id="btn-submit-voluntario" class="btn-shine w-full py-3.5 rounded-xl bg-gradient-to-r from-brand-500 to-emerald-400 text-slate-950 font-black text-xs uppercase tracking-wider shadow-lg shadow-brand-500/20 hover:scale-[1.01] transition-all mt-2">
+                <i class="bi bi-check-circle-fill me-1"></i> Registrarme como Voluntario
             </button>
+        </form>
+
+        <div class="text-center pt-2 text-xs text-slate-400">
+            ¿Ya tienes una cuenta? <a href="{{ route('login') }}" class="text-brand-400 font-bold hover:underline">Iniciar Sesión</a>
         </div>
-    </header>
+    </div>
+</div>
 
-    <!-- MAIN: FORMULARIO DE REGISTRO DE VOLUNTARIO -->
-    <main class="py-5">
-        <div class="container">
-            <div class="formulario-contenedor">
-                <div class="formulario-cabecera">
-                    <div class="metrica-icono mx-auto mb-3">
-                        <i class="bi bi-person-plus-fill"></i>
-                    </div>
-                    <h2>Registro de Estudiante Voluntario</h2>
-                    <p>Únete a la red de voluntariado universitario de la región Cusco.</p>
-                </div>
+<script>
+    function procesarRegistroVoluntario(e) {
+        e.preventDefault();
+        const dni = document.getElementById('vol_dni').value;
+        if (dni.length !== 8) {
+            Swal.fire({ title: 'DNI Inválido', text: 'El DNI debe contener exactamente 8 dígitos numéricos.', icon: 'warning', background: '#0f172a', color: '#fff' });
+            return;
+        }
 
-                <form id="form-registro-voluntario" action="{{ route('registrar') }}" method="POST" novalidate>
-                    @csrf
-                    
-                    <!-- Nombres y DNI -->
-                    <div class="form-grid-dos">
-                        <div class="form-campo">
-                            <label for="reg-nombre">Nombre Completo <span class="text-danger">*</span></label>
-                            <input type="text" name="name" id="reg-nombre" placeholder="Ej. Piero Edu Alcca" required>
-                        </div>
-                        <div class="form-campo">
-                            <label for="reg-dni">DNI (8 dígitos) <span class="text-danger">*</span></label>
-                            <input type="text" name="dni" id="reg-dni" maxlength="8" placeholder="Ej. 70959838" required>
-                        </div>
-                    </div>
+        if (!document.getElementById('acepto_legal_vol').checked) {
+            Swal.fire({ title: 'Consentimiento Requerido', text: 'Debes aceptar la Política de Privacidad y los Términos de Uso para continuar.', icon: 'warning', background: '#0f172a', color: '#fff' });
+            return;
+        }
 
-                    <!-- Correo y Teléfono -->
-                    <div class="form-grid-dos">
-                        <div class="form-campo">
-                            <label for="reg-correo">Correo Institucional / Personal <span class="text-danger">*</span></label>
-                            <input type="email" name="email" id="reg-correo" placeholder="ejemplo@continental.edu.pe" required>
-                        </div>
-                        <div class="form-campo">
-                            <label for="reg-telefono">Celular (9 dígitos) <span class="text-danger">*</span></label>
-                            <input type="tel" name="telefono" id="reg-telefono" maxlength="9" placeholder="984123456" required>
-                        </div>
-                    </div>
+        const btn = document.getElementById('btn-submit-voluntario');
+        btn.disabled = true;
+        btn.innerHTML = '<i class="bi bi-arrow-repeat animate-spin me-1"></i> Creando Perfil...';
 
-                    <!-- Carrera y Disponibilidad -->
-                    <div class="form-grid-dos">
-                        <div class="form-campo">
-                            <label for="reg-carrera">Carrera Universitaria <span class="text-danger">*</span></label>
-                            <select name="carrera" id="reg-carrera" required>
-                                <option value="">Selecciona tu carrera...</option>
-                                <option value="Ingeniería de Sistemas e Informática">Ing. de Sistemas e Informática</option>
-                                <option value="Ingeniería Ambiental">Ingeniería Ambiental</option>
-                                <option value="Psicología">Psicología</option>
-                                <option value="Educación">Educación</option>
-                                <option value="Administración">Administración</option>
-                                <option value="Derecho">Derecho</option>
-                                <option value="Medicina Humana">Medicina / Enfermería</option>
-                            </select>
-                        </div>
-                        <div class="form-campo">
-                            <label for="reg-disponibilidad">Disponibilidad Preferente</label>
-                            <select name="disponibilidad" id="reg-disponibilidad">
-                                <option value="Fines de semana">Fines de semana (Sáb/Dom)</option>
-                                <option value="Tardes entre semana">Tardes entre semana</option>
-                                <option value="Mañanas">Mañanas</option>
-                                <option value="Virtual / Flexible">Virtual / Flexible</option>
-                            </select>
-                        </div>
-                    </div>
+        const formData = new FormData(document.getElementById('form-registro-voluntario'));
 
-                    <!-- Contraseña -->
-                    <div class="form-campo">
-                        <label for="reg-password">Contraseña Segura <span class="text-danger">*</span></label>
-                        <input type="password" name="password" id="reg-password" placeholder="Mínimo 8 caracteres (Mayúscula, minúscula y número)" required>
-                    </div>
+        fetch('{{ route("registrar") }}', {
+            method: 'POST',
+            headers: {
+                'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                'Accept': 'application/json'
+            },
+            body: formData
+        })
+        .then(res => {
+            if (!res.ok) return res.json().then(err => { throw err; });
+            return res.json();
+        })
+        .then(data => {
+            if (data.status === 'success' || data.redirect) {
+                if (typeof confetti === 'function') confetti({ particleCount: 140, spread: 80, origin: { y: 0.6 } });
+                Swal.fire({
+                    title: '¡Bienvenido a VoluntMatch!',
+                    text: 'Perfil de voluntario creado con éxito. Redirigiendo a tu Dashboard...',
+                    icon: 'success',
+                    background: '#0f172a',
+                    color: '#fff',
+                    confirmButtonColor: '#10b981',
+                    confirmButtonText: 'Ir a mi Panel'
+                }).then(() => {
+                    window.location.href = data.redirect || "{{ route('home') }}";
+                });
+            }
+        })
+        .catch(err => {
+            btn.disabled = false;
+            btn.innerHTML = '<i class="bi bi-check-circle-fill me-1"></i> Registrarme como Voluntario';
+            let mensajeError = 'Ocurrió un problema al procesar el registro.';
+            if (err.errors) mensajeError = Object.values(err.errors).flat().join('<br>');
+            else if (err.message) mensajeError = err.message;
 
-                    <!-- Términos -->
-                    <div class="form-check mb-4 mt-2">
-                        <input class="form-check-input" type="checkbox" id="reg-terminos" required>
-                        <label class="form-check-label small text-muted" for="reg-terminos">
-                            Acepto el tratamiento ético de mis datos personales según la <strong>Ley N.° 29733 de Protección de Datos Personales de Perú</strong> y los lineamientos de la Universidad Continental.
-                        </label>
-                    </div>
-
-                    <div class="d-grid">
-                        <button type="submit" class="btn-custom btn-primary-custom py-2 fs-6">
-                            <i class="bi bi-check-circle-fill me-2"></i> Crear Cuenta de Voluntario
-                        </button>
-                    </div>
-                </form>
-
-                <div class="text-center mt-4 pt-3 border-top">
-                    <p class="small text-muted mb-1">¿Ya tienes una cuenta registrada?</p>
-                    <a href="{{ route('login') }}" class="fw-bold" style="color: var(--color-primario);">Inicia Sesión Aquí</a>
-                </div>
-            </div>
-        </div>
-    </main>
-
-    <!-- PIE DE PÁGINA -->
-    <footer class="footer-sitio">
-        <div class="footer-grid">
-            <div class="footer-col">
-                <div class="d-flex align-items-center mb-3">
-                    <i class="bi bi-people-fill text-success fs-3 me-2"></i>
-                    <h4 class="mb-0 text-white">VoluntMatch Cusco</h4>
-                </div>
-                <p class="small text-white">
-                    Fomentando la participación ciudadana y el compromiso ético de los estudiantes en la región de Cusco.
-                </p>
-            </div>
-            <div class="footer-col">
-                <h4>Navegación</h4>
-                <ul>
-                    <li><a href="{{ route('index') }}">Inicio</a></li>
-                    <li><a href="{{ route('oportunidades') }}">Oportunidades</a></li>
-                    <li><a href="{{ route('contacto') }}">Contacto y Soporte</a></li>
-                    <li><a href="{{ route('login') }}">Iniciar Sesión</a></li>
-                </ul>
-            </div>
-            <div class="footer-col">
-                <h4>Marco Ético</h4>
-                <ul>
-                    <li><a href="#">Ley N.° 29733 (Privacidad)</a></li>
-                    <li><a href="#">Pautas WCAG 2.1</a></li>
-                    <li><a href="#">Licencia Open Source</a></li>
-                </ul>
-            </div>
-            <div class="footer-col">
-                <h4>Universidad Continental</h4>
-                <p class="small text-white mb-2">Ingeniería de Sistemas e Informática</p>
-                <p class="small text-white mb-2">Asignatura: Programación Web</p>
-                <p class="small text-white">Cusco, 2026</p>
-            </div>
-            <div class="footer-col">
-                <h4><i class="bi bi-people-fill text-success me-1"></i> Creadores</h4>
-                <ul class="creadores-lista">
-                    <li><span>Piero Edu Alcca Moron</span> <span class="badge-porcentaje">100%</span></li>
-                    <li><span>Luis Angel Dueñas Quintana</span> <span class="badge-porcentaje">100%</span></li>
-                    <li><span>Patrick Antonio Leguia Choquemamani</span> <span class="badge-porcentaje">100%</span></li>
-                    <li><span>Alexis Sebastian Rojas Lopez</span> <span class="badge-porcentaje">100%</span></li>
-                </ul>
-            </div>
-        </div>
-
-        <div class="footer-creditos">
-            <div class="footer-creadores-banner">
-                <i class="bi bi-award-fill text-success me-1"></i>
-                <strong>Creadores del Proyecto:</strong>
-                <span>Piero Edu Alcca Moron <strong>100%</strong></span> •
-                <span>Luis Angel Dueñas Quintana <strong>100%</strong></span> •
-                <span>Patrick Antonio Leguia Choquemamani <strong>100%</strong></span> •
-                <span>Alexis Sebastian Rojas Lopez <strong>100%</strong></span>
-            </div>
-            <p class="mb-0 text-white">© 2026 VoluntMatch Cusco. Desarrollado por el Grupo 6. Universidad Continental. Licencia MIT.</p>
-        </div>
-    </footer>
-
-    <!-- Bootstrap 5 JS Bundle -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-    <!-- Scripts -->
-    <script src="{{ asset('js/main.js') }}"></script>
-    <script src="{{ asset('js/validaciones.js') }}"></script>
-</body>
-</html>
+            Swal.fire({
+                title: 'Atención',
+                html: mensajeError,
+                icon: 'warning',
+                background: '#0f172a',
+                color: '#fff',
+                confirmButtonColor: '#10b981'
+            });
+        });
+    }
+</script>
+@endsection

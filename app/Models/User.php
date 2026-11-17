@@ -2,35 +2,44 @@
 
 namespace App\Models;
 
-use Database\Factories\UserFactory;
-use Illuminate\Database\Eloquent\Attributes\Fillable;
-use Illuminate\Database\Eloquent\Attributes\Hidden;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
-#[Fillable(['name', 'email', 'password'])]
-#[Hidden(['password', 'remember_token'])]
 class User extends Authenticatable
 {
-    /** @use HasFactory<UserFactory> */
     use HasFactory, Notifiable;
 
     /**
-     * Get the attributes that should be cast.
-     *
-     * @return array<string, string>
+     * Atributos asignables masivamente en MySQL para Voluntarios y ONGs.
      */
-    protected function casts(): array
-    {
-        return [
-            'email_verified_at' => 'datetime',
-            'password' => 'hashed',
-        ];
-    }
+    protected $fillable = [
+        'name',
+        'email',
+        'password',
+        'tipo_usuario',
+        'dni',
+        'telefono',
+        'carrera',
+        'disponibilidad',
+        'ruc',
+        'distrito',
+        'mision',
+    ];
 
-    public function postulaciones()
-    {
-        return $this->hasMany(Postulacion::class, 'user_id');
-    }
+    /**
+     * Atributos ocultos en serialización.
+     */
+    protected $hidden = [
+        'password',
+        'remember_token',
+    ];
+
+    /**
+     * Conversión de tipos.
+     */
+    protected $casts = [
+        'email_verified_at' => 'datetime',
+        'password' => 'hashed',
+    ];
 }

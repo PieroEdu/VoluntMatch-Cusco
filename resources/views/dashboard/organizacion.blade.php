@@ -1,447 +1,449 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Panel de Organización / ONG - VoluntMatch Cusco</title>
-    <!-- Favicon -->
-    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%232E7D32'><path d='M7 14s-1 0-1-1 1-4 5-4 5 3 5 4-1 1-1 1zm4-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6m-5.784 6A2.24 2.24 0 0 1 5 13c0-1.355.68-2.75 1.936-3.72A6.3 6.3 0 0 0 5 9c-4 0-5 3-5 4s1 1 1 1zM4.5 8a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5'/></svg>">
-    <!-- Bootstrap 5 CSS (CDN) -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
-    <!-- Bootstrap Icons (CDN) -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-    <!-- SweetAlert2 CSS -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
-    <!-- Hoja de estilos principal -->
-    <link rel="stylesheet" href="{{ asset('css/styles.css') }}">
-</head>
-<body style="background-color: #F8FAFC;">
+@extends('layouts.app')
 
-    <!-- CABECERA PRINCIPAL -->
-    <header class="header-principal">
-        <div class="header-container">
-            <div class="logo-sitio">
-                <a href="{{ route('index') }}" class="d-flex align-items-center text-decoration-none">
-                    <i class="bi bi-people-fill me-2"></i>
-                    <span style="color: var(--color-primario); font-weight: 800;">VoluntMatch</span>
-                    <span class="logo-tag">Cusco</span>
-                </a>
-            </div>
+@section('content')
+<div class="relative min-h-[85vh] py-10 px-6 max-w-7xl mx-auto space-y-8 z-10">
+    
+    <div class="fixed inset-0 pointer-events-none z-0">
+        <div class="absolute top-1/4 left-1/2 -translate-x-1/2 w-[700px] h-[400px] bg-amberGlow-500/10 rounded-full blur-[160px]"></div>
+    </div>
 
-            <nav class="nav-principal">
-                <ul>
-                    <li><a href="{{ route('index') }}"><i class="bi bi-house-door"></i> Inicio</a></li>
-                    <li><a href="{{ route('oportunidades') }}"><i class="bi bi-grid-fill"></i> Oportunidades</a></li>
-                    <li><a href="{{ route('home') }}"><i class="bi bi-speedometer2"></i> Mi Panel</a></li>
-                    <li><a href="{{ route('dashboard-organizacion') }}" class="activo"><i class="bi bi-building"></i> Panel ONG</a></li>
-                    <li><a href="{{ route('contacto') }}"><i class="bi bi-envelope"></i> Soporte</a></li>
-                </ul>
-            </nav>
-
-            <div class="acciones-usuario">
-                <span class="d-flex align-items-center small fw-semibold text-secondary me-2">
-                    <i class="bi bi-building-fill fs-5 text-warning me-1"></i> {{ $organizacionActual->nombre ?? (Auth::user()->name ?? 'Organización Social') }}
-                </span>
-                <a href="{{ route('logout') }}" class="btn-custom btn-outline-custom" style="padding: 0.35rem 0.8rem; font-size: 0.85rem;" title="Cerrar sesión">
-                    <i class="bi bi-box-arrow-right"></i> Salir
-                </a>
-            </div>
-
-            <button class="boton-menu-movil" aria-label="Abrir menú de navegación">
-                <i class="bi bi-list"></i>
+    <!-- CABECERA INSTITUCIONAL -->
+    <div class="p-8 rounded-3xl glass-card border border-amberGlow-500/30 flex flex-col lg:flex-row lg:items-center justify-between gap-6 relative z-10">
+        <div class="space-y-2">
+            <span class="px-3 py-1 rounded-full text-xs font-black bg-amberGlow-500/20 text-amberGlow-400 border border-amberGlow-500/30 inline-block uppercase tracking-wider">
+                <i class="bi bi-building-check me-1"></i> Panel Institucional ONG
+            </span>
+            <h1 class="text-3xl sm:text-4xl font-black text-white tracking-tight">{{ $user->name }}</h1>
+            <p class="text-slate-400 text-xs sm:text-sm">
+                RUC: <strong class="text-slate-200">{{ $user->ruc ?? 'Sin RUC' }}</strong> • Sede: <strong class="text-slate-200">{{ $user->distrito ?? 'Cusco Centro' }}</strong> • Tel: <strong class="text-slate-200">{{ $user->telefono ?? 'Sin teléfono' }}</strong>
+            </p>
+        </div>
+        <div class="flex flex-wrap items-center gap-3">
+            <button type="button" onclick="abrirModalEditarPerfilOng()" class="px-4 py-3.5 rounded-2xl bg-slate-900 border border-white/15 hover:border-amberGlow-400/50 text-slate-200 hover:text-amberGlow-300 font-bold text-xs uppercase tracking-wider transition-all inline-flex items-center gap-1.5">
+                <i class="bi bi-building-gear text-base"></i> Editar Perfil
             </button>
-        </div>
-    </header>
-
-    <!-- MAIN: DASHBOARD DE LA ORGANIZACIÓN -->
-    <main class="py-4">
-        <div class="container-ancho px-3">
-
-            @if(session('success'))
-            <div class="alert alert-success alert-dismissible fade show rounded-3 mb-4 shadow-sm" role="alert">
-                <i class="bi bi-check-circle-fill me-2"></i> {{ session('success') }}
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-            </div>
-            @endif
-
-            @if(session('error'))
-            <div class="alert alert-danger alert-dismissible fade show rounded-3 mb-4 shadow-sm" role="alert">
-                <i class="bi bi-exclamation-triangle-fill me-2"></i> {{ session('error') }}
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-            </div>
-            @endif
-            
-            <div class="d-flex justify-content-between align-items-center flex-wrap mb-4 p-4 bg-white rounded-3 border">
-                <div>
-                    <span class="badge bg-warning-subtle text-warning-emphasis px-3 py-1 mb-2 fw-semibold">
-                        <i class="bi bi-shield-check me-1"></i> Organización Social Verificada
-                    </span>
-                    <h1 class="h3 fw-bold mb-1" style="color: #1A202C;">{{ $organizacionActual->nombre ?? (Auth::user()->name ?? 'Organización Social') }}</h1>
-                    <p class="text-muted small mb-0">
-                        RUC: {{ $organizacionActual->ruc ?? '20608912345' }} • {{ $organizacionActual->distrito ?? 'Cusco Centro' }}{{ !empty($organizacionActual->direccion) ? ' • ' . $organizacionActual->direccion : '' }} • Acreditación Social 2026
-                    </p>
-                </div>
-                <div class="mt-3 mt-md-0">
-                    <button type="button" class="btn-custom btn-accent-custom" id="btn-abrir-crear-convocatoria">
-                        <i class="bi bi-plus-circle-fill me-1"></i> Publicar Nueva Convocatoria
-                    </button>
-                </div>
-            </div>
-
-            <!-- INDICADORES CLAVE DE LA ONG -->
-            <div class="row g-3 mb-4">
-                <div class="col-sm-6 col-lg-3">
-                    <div class="p-3 bg-white rounded-3 border shadow-sm">
-                        <div class="d-flex align-items-center justify-content-between">
-                            <div>
-                                <div class="text-muted small">Convocatorias Activas</div>
-                                <div class="h3 fw-bold mb-0 text-success">{{ $convocatoriasActivas ?? 0 }} Causas</div>
-                            </div>
-                            <div class="metrica-icono m-0" style="width: 48px; height: 48px; font-size: 1.3rem;">
-                                <i class="bi bi-megaphone-fill"></i>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-sm-6 col-lg-3">
-                    <div class="p-3 bg-white rounded-3 border shadow-sm">
-                        <div class="d-flex align-items-center justify-content-between">
-                            <div>
-                                <div class="text-muted small">Postulantes Recibidos</div>
-                                <div class="h3 fw-bold mb-0 text-primary" id="num-postulantes-recibidos">{{ $postulantesRecibidos ?? 0 }}</div>
-                            </div>
-                            <div class="metrica-icono m-0" style="width: 48px; height: 48px; font-size: 1.3rem; background-color: #E1F5FE; color: #0288D1;">
-                                <i class="bi bi-people-fill"></i>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-sm-6 col-lg-3">
-                    <div class="p-3 bg-white rounded-3 border shadow-sm">
-                        <div class="d-flex align-items-center justify-content-between">
-                            <div>
-                                <div class="text-muted small">Matches Confirmados</div>
-                                <div class="h3 fw-bold mb-0 text-warning" id="num-matches-confirmados">{{ $matchesConfirmados ?? 0 }}</div>
-                            </div>
-                            <div class="metrica-icono m-0" style="width: 48px; height: 48px; font-size: 1.3rem; background-color: #FFF3E0; color: #E65100;">
-                                <i class="bi bi-person-check-fill"></i>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-sm-6 col-lg-3">
-                    <div class="p-3 bg-white rounded-3 border shadow-sm">
-                        <div class="d-flex align-items-center justify-content-between">
-                            <div>
-                                <div class="text-muted small">Tasa de Cobertura</div>
-                                <div class="h3 fw-bold mb-0 text-dark">{{ $tasaCobertura ?? 0 }}%</div>
-                            </div>
-                            <div class="metrica-icono m-0" style="width: 48px; height: 48px; font-size: 1.3rem; background-color: #ECEFF1; color: #455A64;">
-                                <i class="bi bi-graph-up-arrow"></i>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- TABLA DE EVALUACIÓN DE POSTULANTES -->
-            <div class="bg-white rounded-3 border p-4 mb-4 shadow-sm">
-                <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
-                    <h3 class="h5 fw-bold mb-0" style="color: #2D3748;">
-                        <i class="bi bi-person-lines-fill text-warning me-2"></i> Postulantes Universitarios Pendientes de Evaluación
-                    </h3>
-                    <span class="small text-muted">Panel de Gestión de Matches</span>
-                </div>
-
-                <div class="table-responsive">
-                    <table class="table table-hover align-middle mb-0">
-                        <thead class="table-light small">
-                            <tr>
-                                <th>Estudiante / Voluntario</th>
-                                <th>Carrera / Universidad</th>
-                                <th>Convocatoria Solicitada</th>
-                                <th>Fecha</th>
-                                <th>Estado</th>
-                                <th class="text-end">Acciones de Match</th>
-                            </tr>
-                        </thead>
-                        <tbody id="tabla-postulantes-ong-body">
-                            @forelse($postulaciones as $post)
-                            <tr>
-                                <td>
-                                    <div class="fw-bold text-dark">{{ $post->estudiante }}</div>
-                                    <div class="small text-muted">
-                                        <i class="bi bi-envelope me-1"></i>{{ $post->correo }}
-                                        @if($post->telefono) • <i class="bi bi-telephone me-1"></i>{{ $post->telefono }} @endif
-                                    </div>
-                                    @if($post->mensaje_motivacion)
-                                    <div class="small text-secondary fst-italic mt-1">
-                                        <i class="bi bi-chat-quote me-1"></i>"{{ Str::limit($post->mensaje_motivacion, 80) }}"
-                                    </div>
-                                    @endif
-                                </td>
-                                <td>
-                                    <div class="fw-semibold text-dark">{{ $post->carrera ?? 'Estudiante' }}</div>
-                                    <div class="small text-muted">{{ $post->universidad ?? 'Universidad Continental' }}</div>
-                                </td>
-                                <td>
-                                    <div class="fw-semibold text-dark">{{ $post->oportunidad->titulo ?? 'Voluntariado' }}</div>
-                                    <span class="badge {{ $post->oportunidad->clase_insignia ?? 'badge-educacion' }}">{{ $post->oportunidad->categoria ?? 'General' }}</span>
-                                </td>
-                                <td>{{ $post->fecha ? \Carbon\Carbon::parse($post->fecha)->format('d/m/Y') : $post->created_at->format('d/m/Y') }}</td>
-                                <td>
-                                    @if($post->estado === 'Aceptado')
-                                        <span class="badge bg-success text-white px-3 py-2 rounded-pill"><i class="bi bi-check-circle-fill me-1"></i> Aceptado</span>
-                                    @elseif($post->estado === 'Rechazado')
-                                        <span class="badge bg-danger text-white px-3 py-2 rounded-pill"><i class="bi bi-x-circle-fill me-1"></i> Rechazado</span>
-                                    @else
-                                        <span class="badge bg-warning text-dark px-3 py-2 rounded-pill"><i class="bi bi-hourglass-split me-1"></i> Pendiente</span>
-                                    @endif
-                                </td>
-                                <td class="text-end">
-                                    @if($post->estado !== 'Aceptado')
-                                    <form action="{{ route('postulaciones.estado', $post->id) }}" method="POST" class="d-inline">
-                                        @csrf
-                                        <input type="hidden" name="estado" value="Aceptado">
-                                        <input type="hidden" name="horas" value="10">
-                                        <button type="submit" class="btn btn-sm btn-success rounded-pill px-3 fw-semibold me-1" title="Aceptar Postulante">
-                                            <i class="bi bi-check-lg"></i> Aceptar
-                                        </button>
-                                    </form>
-                                    @endif
-
-                                    @if($post->estado !== 'Rechazado')
-                                    <form action="{{ route('postulaciones.estado', $post->id) }}" method="POST" class="d-inline">
-                                        @csrf
-                                        <input type="hidden" name="estado" value="Rechazado">
-                                        <button type="submit" class="btn btn-sm btn-outline-danger rounded-pill px-3 fw-semibold" title="Rechazar Postulante" onclick="return confirm('¿Seguro que deseas rechazar este postulante?');">
-                                            <i class="bi bi-x-lg"></i> Rechazar
-                                        </button>
-                                    </form>
-                                    @endif
-                                </td>
-                            </tr>
-                            @empty
-                            <tr>
-                                <td colspan="6" class="text-center py-4 text-muted">
-                                    <i class="bi bi-people fs-2 d-block mb-2 text-secondary"></i>
-                                    No hay postulantes registrados por el momento.
-                                </td>
-                            </tr>
-                            @endforelse
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-
-            <!-- LISTADO DE CONVOCATORIAS PUBLICADAS -->
-            <div class="p-4 bg-white rounded-3 border shadow-sm">
-                <h3 class="h5 fw-bold mb-3" style="color: #2D3748;">
-                    <i class="bi bi-collection-fill text-success me-2"></i> Mis Convocatorias Publicadas
-                </h3>
-                <div class="row g-3">
-                    @forelse($oportunidades as $op)
-                    <div class="col-md-6">
-                        <div class="p-3 rounded bg-light border d-flex justify-content-between align-items-center">
-                            <div>
-                                <span class="badge-categoria {{ $op->clase_insignia }} mb-1">{{ $op->categoria }}</span>
-                                <h5 class="h6 fw-bold mb-1">{{ $op->titulo }}</h5>
-                                <div class="small text-muted">
-                                    <i class="bi bi-geo-alt"></i> {{ $op->distrito }} • {{ $op->cupos_restantes }} cupos restantes ({{ $op->cupos }} totales)
-                                </div>
-                            </div>
-                            <div class="text-end">
-                                <span class="badge {{ $op->cupos_restantes > 0 ? 'bg-success' : 'bg-secondary' }} mb-1 d-block">
-                                    {{ $op->cupos_restantes > 0 ? 'Activa' : 'Cerrada' }}
-                                </span>
-                                <a href="{{ route('detalle-oportunidad', ['id' => $op->id]) }}" class="btn btn-sm btn-outline-primary rounded-pill py-0 px-2 small">Ver Detalle</a>
-                            </div>
-                        </div>
-                    </div>
-                    @empty
-                    <div class="col-12 text-center text-muted py-3">
-                        No hay convocatorias publicadas aún.
-                    </div>
-                    @endforelse
-                </div>
-            </div>
-
-        </div>
-    </main>
-
-    <!-- MODAL PARA PUBLICAR NUEVA CONVOCATORIA -->
-    <div class="modal-overlay" id="modal-crear-convocatoria">
-        <div class="modal-caja shadow-lg" style="max-width: 600px; max-height: 90vh; overflow-y: auto;">
-            <button class="modal-cerrar" id="btn-cerrar-modal-convocatoria" type="button" aria-label="Cerrar">&times;</button>
-            
-            <div class="d-flex align-items-center mb-3">
-                <div class="rounded-circle bg-warning bg-opacity-10 text-warning p-2 me-2 d-flex align-items-center justify-content-center" style="width: 44px; height: 44px;">
-                    <i class="bi bi-plus-circle-fill fs-5 text-success"></i>
-                </div>
-                <div>
-                    <h4 class="fw-bold mb-0 text-dark">Publicar Nueva Convocatoria</h4>
-                    <span class="small text-muted">Registra una causa para recibir postulantes en Cusco</span>
-                </div>
-            </div>
-
-            <form action="{{ route('oportunidades.store') }}" method="POST">
-                @csrf
-                <div class="mb-3">
-                    <label class="form-label small fw-bold">Título de la Convocatoria *</label>
-                    <input type="text" class="form-control" name="titulo" placeholder="Ej. Taller de Lectura y Arte Infantil" required>
-                </div>
-
-                <div class="row g-2 mb-3">
-                    <div class="col-sm-6">
-                        <label class="form-label small fw-bold">Organización / ONG *</label>
-                        <input type="text" class="form-control" name="ong" value="{{ $organizacionActual->nombre ?? (Auth::user()->name ?? '') }}" required>
-                    </div>
-                    <div class="col-sm-6">
-                        <label class="form-label small fw-bold">Distrito *</label>
-                        <select class="form-select" name="distrito" required>
-                            <option value="Cusco Centro">Cusco Centro</option>
-                            <option value="San Jerónimo" selected>San Jerónimo</option>
-                            <option value="Wanchaq">Wanchaq</option>
-                            <option value="Santiago">Santiago</option>
-                            <option value="San Sebastián">San Sebastián</option>
-                        </select>
-                    </div>
-                </div>
-
-                <div class="row g-2 mb-3">
-                    <div class="col-sm-6">
-                        <label class="form-label small fw-bold">Categoría *</label>
-                        <select class="form-select" name="categoria" required>
-                            <option value="Educación">Educación</option>
-                            <option value="Sistemas">Sistemas</option>
-                            <option value="Medio Ambiente">Medio Ambiente</option>
-                            <option value="Logística">Logística</option>
-                        </select>
-                    </div>
-                    <div class="col-sm-6">
-                        <label class="form-label small fw-bold">Modalidad *</label>
-                        <select class="form-select" name="modalidad" required>
-                            <option value="Presencial">Presencial</option>
-                            <option value="Híbrido">Híbrido</option>
-                            <option value="Virtual">Virtual</option>
-                        </select>
-                    </div>
-                </div>
-
-                <div class="row g-2 mb-3">
-                    <div class="col-sm-6">
-                        <label class="form-label small fw-bold">Horario *</label>
-                        <input type="text" class="form-control" name="horario" placeholder="Ej. Sábados 9:00 AM - 1:00 PM" required>
-                    </div>
-                    <div class="col-sm-6">
-                        <label class="form-label small fw-bold">Cupos Vacantes *</label>
-                        <input type="number" class="form-control" name="cupos" min="1" max="50" value="5" required>
-                    </div>
-                </div>
-
-                <div class="mb-3">
-                    <label class="form-label small fw-bold">Descripción de la Causa *</label>
-                    <textarea class="form-control" name="descripcion" rows="3" placeholder="Describe los objetivos y actividades que realizarán los voluntarios..." required></textarea>
-                </div>
-
-                <div class="mb-3">
-                    <label class="form-label small fw-bold">Habilidades Requeridas (separadas por coma)</label>
-                    <input type="text" class="form-control" name="habilidades" placeholder="Ej. Paciencia, Docencia básica, Empatía">
-                </div>
-
-                <div class="d-flex justify-content-end gap-2 mt-4">
-                    <button type="button" class="btn btn-outline-secondary px-3" id="btn-cancelar-modal-convocatoria">Cancelar</button>
-                    <button type="submit" class="btn btn-success px-4 fw-semibold">
-                        <i class="bi bi-send me-1"></i> Publicar Convocatoria
-                    </button>
-                </div>
-            </form>
+            <a href="{{ route('ong.campana.crear') }}" class="px-6 py-3.5 rounded-2xl bg-gradient-to-r from-amberGlow-400 via-amber-500 to-brand-500 text-slate-950 font-black text-xs uppercase tracking-wider shadow-lg shadow-amberGlow-500/20 hover:scale-105 transition-all whitespace-nowrap inline-flex items-center gap-2">
+                <i class="bi bi-plus-circle-fill text-base"></i> Publicar Nueva Campaña
+            </a>
         </div>
     </div>
 
-    <!-- PIE DE PÁGINA -->
-    <footer class="footer-sitio">
-        <div class="footer-grid">
-            <div class="footer-col">
-                <div class="d-flex align-items-center mb-3">
-                    <i class="bi bi-people-fill text-success fs-3 me-2"></i>
-                    <h4 class="mb-0 text-white">VoluntMatch Cusco</h4>
+    <!-- MÉTRICAS REALES -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 relative z-10">
+        <div class="p-6 rounded-3xl glass-card text-center border border-slate-800">
+            <div class="w-12 h-12 rounded-2xl bg-amberGlow-500/20 text-amberGlow-400 flex items-center justify-center mx-auto mb-3 text-xl"><i class="bi bi-megaphone-fill"></i></div>
+            <span class="block text-3xl font-black text-amberGlow-400 mb-1">{{ $totalConvocatorias }}</span>
+            <span class="text-xs text-slate-400 font-bold uppercase tracking-wider">Campañas Publicadas</span>
+        </div>
+        <div class="p-6 rounded-3xl glass-card text-center border border-slate-800">
+            <div class="w-12 h-12 rounded-2xl bg-cyanNeon-500/20 text-cyanNeon-400 flex items-center justify-center mx-auto mb-3 text-xl"><i class="bi bi-people-fill"></i></div>
+            <span class="block text-3xl font-black text-cyanNeon-400 mb-1">{{ $solicitudesPendientes->count() }}</span>
+            <span class="text-xs text-slate-400 font-bold uppercase tracking-wider">Postulantes por Evaluar</span>
+        </div>
+        <div class="p-6 rounded-3xl glass-card text-center border border-slate-800">
+            <div class="w-12 h-12 rounded-2xl bg-brand-500/20 text-brand-400 flex items-center justify-center mx-auto mb-3 text-xl"><i class="bi bi-award-fill"></i></div>
+            <span class="block text-3xl font-black text-brand-400 mb-1">{{ $horasOtorgadas }} hrs</span>
+            <span class="text-xs text-slate-400 font-bold uppercase tracking-wider">Horas Certificadas</span>
+        </div>
+    </div>
+
+    <!-- CHAT DIRECTO CON COORDINACIÓN UC + AVISOS PARA LA ONG -->
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 relative z-10">
+        <div class="lg:col-span-7 glass-card rounded-3xl border border-amberGlow-500/30 p-6 flex flex-col justify-between space-y-4">
+            <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+                <div class="flex items-center gap-2.5">
+                    <div class="w-9 h-9 rounded-full bg-amberGlow-500/20 border border-amberGlow-500/40 text-amberGlow-300 font-black text-xs flex items-center justify-center">UC</div>
+                    <div>
+                        <h3 class="text-sm font-black text-white">Chat Institucional con Coordinación UC</h3>
+                        <span class="text-[11px] text-emerald-400 flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping"></span> Canal Directo ONG</span>
+                    </div>
                 </div>
-                <p class="small text-white">
-                    Espacio de articulación entre instituciones sin fines de lucro y la comunidad universitaria cusqueña.
-                </p>
             </div>
-            <div class="footer-col">
-                <h4>Navegación</h4>
-                <ul>
-                    <li><a href="{{ route('index') }}">Inicio</a></li>
-                    <li><a href="{{ route('oportunidades') }}">Oportunidades</a></li>
-                    <li><a href="{{ route('dashboard-organizacion') }}">Panel de Convocatorias</a></li>
-                </ul>
+
+            <div id="ong-chat-box" class="space-y-3 max-h-52 overflow-y-auto pr-1">
+                @forelse($hiloSoporte as $msg)
+                    @if($msg->mensaje !== 'Conversación iniciada por Coordinación Institucional.')
+                        <div class="flex flex-col items-end space-y-0.5">
+                            <span class="text-[10px] font-mono text-slate-400">Tu ONG • {{ \Carbon\Carbon::parse($msg->created_at)->format('d/m H:i') }}</span>
+                            <div class="max-w-sm px-3.5 py-2.5 rounded-2xl rounded-tr-sm bg-slate-800 text-white text-xs">{{ $msg->mensaje }}</div>
+                        </div>
+                    @endif
+                    @if(!empty($msg->respuesta_admin))
+                        <div class="flex flex-col items-start space-y-0.5">
+                            <span class="text-[10px] font-mono text-amberGlow-400">Coordinación UC</span>
+                            <div class="max-w-sm px-3.5 py-2.5 rounded-2xl rounded-tl-sm bg-amberGlow-500/15 border border-amberGlow-500/40 text-amberGlow-100 text-xs">
+                                {{ $msg->respuesta_admin }}
+                            </div>
+                        </div>
+                    @endif
+                @empty
+                    <p class="text-xs text-slate-400 text-center py-6">¿Necesitas coordinar convenios, validación RUC o campañas? Escribe aquí al Administrador.</p>
+                @endforelse
             </div>
-            <div class="footer-col">
-                <h4>Soporte a Organizaciones</h4>
-                <ul>
-                    <li><a href="{{ route('contacto') }}">Atención al Coordinador</a></li>
-                    <li><a href="#">Convenios Institucionales</a></li>
-                </ul>
-            </div>
-            <div class="footer-col">
-                <h4>Universidad Continental</h4>
-                <p class="small text-white mb-2">Ingeniería de Sistemas e Informática</p>
-                <p class="small text-white mb-2">Asignatura: Programación Web</p>
-                <p class="small text-white">Cusco, 2026</p>
-            </div>
-            <div class="footer-col">
-                <h4><i class="bi bi-people-fill text-success me-1"></i> Creadores</h4>
-                <ul class="creadores-lista">
-                    <li><span>Piero Edu Alcca Moron</span> <span class="badge-porcentaje">100%</span></li>
-                    <li><span>Luis Angel Dueñas Quintana</span> <span class="badge-porcentaje">100%</span></li>
-                    <li><span>Patrick Antonio Leguia Choquemamani</span> <span class="badge-porcentaje">100%</span></li>
-                    <li><span>Alexis Sebastian Rojas Lopez</span> <span class="badge-porcentaje">100%</span></li>
-                </ul>
-            </div>
+
+            <form onsubmit="enviarMensajeSoporteOng(event)" class="flex items-center gap-2 pt-2 border-t border-slate-800">
+                <input type="text" id="ong-chat-input" required placeholder="Escribir mensaje a Coordinación UC..." class="flex-1 px-4 py-2.5 rounded-full bg-slate-950 border border-slate-800 text-white text-xs focus:border-amberGlow-400 focus:outline-none">
+                <button type="submit" class="w-10 h-10 rounded-full bg-amberGlow-400 text-slate-950 font-black flex items-center justify-center shrink-0 hover:scale-105 transition-transform">
+                    <i class="bi bi-send-fill"></i>
+                </button>
+            </form>
         </div>
 
-        <div class="footer-creditos">
-            <div class="footer-creadores-banner">
-                <i class="bi bi-award-fill text-success me-1"></i>
-                <strong>Creadores del Proyecto:</strong>
-                <span>Piero Edu Alcca Moron <strong>100%</strong></span> •
-                <span>Luis Angel Dueñas Quintana <strong>100%</strong></span> •
-                <span>Patrick Antonio Leguia Choquemamani <strong>100%</strong></span> •
-                <span>Alexis Sebastian Rojas Lopez <strong>100%</strong></span>
+        <div class="lg:col-span-5 glass-card rounded-3xl border border-slate-800 p-6 space-y-3">
+            <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+                <h3 class="text-sm font-black text-white uppercase tracking-wider"><i class="bi bi-bell-fill text-purple-400 me-2"></i>Comunicados Recientes</h3>
             </div>
-            <p class="mb-0 text-white">© 2026 VoluntMatch Cusco. Desarrollado por el Grupo 6. Universidad Continental. Licencia MIT.</p>
+            <div class="space-y-2.5 max-h-56 overflow-y-auto pr-1">
+                @forelse($notificaciones->take(4) as $notif)
+                    <div class="p-3 rounded-2xl bg-slate-900/80 border border-slate-800 space-y-1">
+                        <span class="text-xs font-black text-purple-300 block">{{ $notif->titulo }}</span>
+                        <p class="text-[11px] text-slate-300 leading-relaxed">{{ $notif->mensaje }}</p>
+                    </div>
+                @empty
+                    <p class="text-xs text-slate-500 text-center py-8">Sin comunicados nuevos.</p>
+                @endforelse
+            </div>
         </div>
-    </footer>
+    </div>
 
-    <!-- Bootstrap 5 JS Bundle -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <!-- Script Principal -->
-    <script src="{{ asset('js/main.js') }}"></script>
-    <script>
-        // Modal para publicar convocatoria
-        const btnAbrirConvocatoria = document.getElementById('btn-abrir-crear-convocatoria');
-        const modalConvocatoria = document.getElementById('modal-crear-convocatoria');
-        const btnCerrarConvocatoria = document.getElementById('btn-cerrar-modal-convocatoria');
-        const btnCancelarConvocatoria = document.getElementById('btn-cancelar-modal-convocatoria');
+    <!-- POSTULANTES PENDIENTES DE EVALUACIÓN -->
+    <div class="glass-card rounded-3xl border border-cyanNeon-500/30 p-6 space-y-4 relative z-10">
+        <div class="flex items-center justify-between border-b border-slate-800 pb-4">
+            <div>
+                <h3 class="text-lg font-black text-white"><i class="bi bi-person-check-fill text-cyanNeon-400 me-2"></i>Postulantes Pendientes de Evaluación</h3>
+                <p class="text-xs text-slate-400">Revisa el expediente y el historial previo del estudiante antes de aceptarlo en la campaña</p>
+            </div>
+            <span class="px-3 py-1 rounded-full text-xs font-bold bg-cyanNeon-500/20 text-cyanNeon-400 border border-cyanNeon-500/30">{{ $solicitudesPendientes->count() }} Pendientes</span>
+        </div>
 
-        if (btnAbrirConvocatoria && modalConvocatoria) {
-            btnAbrirConvocatoria.addEventListener('click', () => modalConvocatoria.classList.add('activo'));
+        @if($solicitudesPendientes->isEmpty())
+            <div class="py-8 text-center text-xs text-slate-400">No tienes solicitudes pendientes de revisión en este momento.</div>
+        @else
+            <div class="overflow-x-auto">
+                <table class="w-full text-left text-xs text-slate-300">
+                    <thead class="text-[11px] font-black uppercase text-slate-400 border-b border-slate-800 bg-slate-900/50">
+                        <tr>
+                            <th class="p-3">Postulante</th>
+                            <th class="p-3">Universidad / Carrera</th>
+                            <th class="p-3">Campaña Solicitada</th>
+                            <th class="p-3 text-right">Evaluación y Decisión</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-800/60">
+                        @foreach($solicitudesPendientes as $sol)
+                        <tr class="hover:bg-slate-900/40 transition-colors">
+                            <td class="p-3">
+                                <div class="font-bold text-white">{{ $sol->voluntario_nombre }}</div>
+                                <div class="text-[11px] text-slate-400">DNI: {{ $sol->voluntario_dni ?? '---' }} • Tel: {{ $sol->telefono_contacto ?? '---' }}</div>
+                            </td>
+                            <td class="p-3">
+                                <div class="font-semibold text-slate-200">{{ $sol->universidad ?? 'Estudiante Universitario' }}</div>
+                                <div class="text-[11px] text-slate-400">{{ $sol->voluntario_carrera ?? '' }} ({{ $sol->ciclo ?? 'Activo' }})</div>
+                            </td>
+                            <td class="p-3 text-amberGlow-400 font-bold">{{ $sol->proyecto }}</td>
+                            <td class="p-3 text-right space-x-1.5">
+                                <button onclick="abrirExpedientePostulante({{ $sol->id }})" class="px-3.5 py-1.5 rounded-lg bg-cyanNeon-500/20 text-cyanNeon-300 border border-cyanNeon-500/40 font-bold text-[11px] hover:bg-cyanNeon-500 hover:text-slate-950 transition-all">
+                                    <i class="bi bi-folder2-open me-1"></i> Ver Expediente
+                                </button>
+                                <button onclick="actualizarSolicitud({{ $sol->id }}, 'Aprobada')" class="px-3 py-1.5 rounded-lg bg-brand-500 text-slate-950 font-black text-[11px] hover:opacity-90">
+                                    Aceptar (-1 cupo)
+                                </button>
+                                <button onclick="actualizarSolicitud({{ $sol->id }}, 'Rechazada')" class="px-2.5 py-1.5 rounded-lg bg-rose-500/20 text-rose-400 border border-rose-500/30 font-bold text-[11px] hover:bg-rose-500 hover:text-white">
+                                    Rechazar
+                                </button>
+                            </td>
+                        </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
+        @endif
+    </div>
+
+    <!-- MIS CAMPAÑAS -->
+    <div class="space-y-6 relative z-10">
+        <div>
+            <h2 class="text-xl font-black text-white">Mis Campañas, Voluntarios Oficiales y Aportes Solidarios</h2>
+            <p class="text-xs text-slate-400">Gestiona la asistencia por jornada, emite certificados y supervisa los vouchers de donación recibidos</p>
+        </div>
+
+        @if($misConvocatorias->isEmpty())
+            <div class="glass-card rounded-3xl border border-slate-800 p-10 text-center space-y-3">
+                <i class="bi bi-folder2-open text-4xl text-slate-600"></i>
+                <p class="text-sm font-bold text-slate-300">Aún no has publicado ninguna campaña</p>
+                <a href="{{ route('ong.campana.crear') }}" class="inline-block px-5 py-2.5 rounded-xl bg-amberGlow-400 text-slate-950 font-black text-xs">Publicar Primera Campaña</a>
+            </div>
+        @else
+            @foreach($misConvocatorias as $conv)
+                @php
+                    $esCerrada = ($conv->estado === 'Cerrada' || $conv->cupos_disponibles <= 0);
+                    $voluntariosCampana = $voluntariosPorCampana->get($conv->id, collect());
+                    $donacionesCampana = isset($donacionesPorCampana) ? $donacionesPorCampana->get($conv->id, collect()) : collect();
+                @endphp
+                <div class="glass-card rounded-3xl border {{ $esCerrada ? 'border-rose-500/40' : 'border-slate-800' }} overflow-hidden">
+                    <div class="p-6 bg-slate-900/80 border-b border-slate-800 flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+                        <div class="flex items-start gap-4">
+                            <img src="{{ $conv->imagen ?? 'https://images.unsplash.com/photo-1559027615-cd4628902d4a?auto=format&fit=crop&w=600&q=80' }}" class="w-24 h-24 rounded-2xl object-cover shrink-0 border border-slate-700 {{ $esCerrada ? 'grayscale' : '' }}">
+                            <div class="space-y-1.5">
+                                <div class="flex flex-wrap items-center gap-2">
+                                    <span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-amberGlow-500/20 text-amberGlow-400">{{ $conv->categoria }}</span>
+                                    @if($esCerrada)
+                                        <span class="px-2.5 py-0.5 rounded-full text-[10px] font-black bg-rose-500/20 text-rose-400 border border-rose-500/30">CERRADA (0/{{ $conv->cupos }} vacantes)</span>
+                                    @else
+                                        <span class="px-2.5 py-0.5 rounded-full text-[10px] font-black bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">{{ $conv->cupos_disponibles }}/{{ $conv->cupos }} vacantes libres</span>
+                                    @endif
+                                    <span class="text-xs font-bold text-slate-400">• Meta: {{ $conv->horas }} hrs</span>
+                                </div>
+                                <h3 class="text-lg font-black text-white">{{ $conv->titulo }}</h3>
+                                <p class="text-xs text-slate-400"><i class="bi bi-geo-alt-fill text-amberGlow-400"></i> {{ $conv->distrito }}</p>
+                            </div>
+                        </div>
+
+                        <div class="flex flex-wrap items-center gap-2 shrink-0">
+                            <a href="{{ route('detalle-oportunidad', ['id' => $conv->id + 1000]) }}" class="px-3 py-2 rounded-xl bg-slate-800 text-cyanNeon-400 font-bold text-xs hover:bg-slate-700">Ver Pública</a>
+                            <button onclick="toggleEstadoConv({{ $conv->id }})" class="px-3 py-2 rounded-xl bg-slate-800 text-slate-300 font-bold text-xs">{{ $esCerrada ? 'Reabrir' : 'Cerrar Vacantes' }}</button>
+                            <a href="{{ route('ong.campana.editar', ['id' => $conv->id]) }}" class="px-3 py-2 rounded-xl bg-slate-800 hover:bg-amberGlow-500 hover:text-slate-950 text-amberGlow-400 font-bold text-xs">Editar</a>
+                            <button onclick="eliminarConvocatoria({{ $conv->id }})" class="px-3 py-2 rounded-xl bg-rose-500/15 hover:bg-rose-500 text-rose-400 hover:text-white font-bold text-xs"><i class="bi bi-trash3-fill"></i></button>
+                        </div>
+                    </div>
+
+                    <div class="p-6 space-y-4">
+                        <h4 class="text-xs font-black uppercase tracking-wider text-brand-400">Voluntarios Aceptados ({{ $voluntariosCampana->count() }})</h4>
+                        @if($voluntariosCampana->isEmpty())
+                            <p class="text-xs text-slate-500 italic">Aún no hay voluntarios aceptados en esta campaña.</p>
+                        @else
+                            <div class="overflow-x-auto">
+                                <table class="w-full text-left text-xs text-slate-300">
+                                    <thead class="text-[11px] font-black uppercase text-slate-400 border-b border-slate-800 bg-slate-950/50">
+                                        <tr>
+                                            <th class="p-3">Voluntario</th>
+                                            <th class="p-3">Progreso</th>
+                                            <th class="p-3 text-right">Gestión</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="divide-y divide-slate-800/60">
+                                        @foreach($voluntariosCampana as $vol)
+                                            @php $porcentaje = $vol->horas > 0 ? min(100, round(($vol->horas_validadas / $vol->horas) * 100)) : 0; @endphp
+                                            <tr class="hover:bg-slate-900/30">
+                                                <td class="p-3">
+                                                    <div class="font-bold text-white">{{ $vol->voluntario_nombre }}</div>
+                                                    <div class="text-[11px] text-slate-400">DNI: {{ $vol->voluntario_dni ?? '---' }}</div>
+                                                </td>
+                                                <td class="p-3 w-56">
+                                                    <div class="flex justify-between text-[11px] font-bold mb-1">
+                                                        <span class="text-brand-400">{{ $vol->horas_validadas }} / {{ $vol->horas }} hrs</span>
+                                                        <span>{{ $porcentaje }}%</span>
+                                                    </div>
+                                                    <div class="w-full h-2 rounded-full bg-slate-800 overflow-hidden">
+                                                        <div class="h-full bg-gradient-to-r from-brand-500 to-emerald-400" style="width: {{ $porcentaje }}%"></div>
+                                                    </div>
+                                                </td>
+                                                <td class="p-3 text-right space-x-1">
+                                                    @if($vol->estado === 'Aprobada')
+                                                        <button onclick="abrirModalAvance({{ $vol->id }}, '{{ addslashes($vol->voluntario_nombre) }}')" class="px-3 py-1.5 rounded-lg bg-cyanNeon-500/20 text-cyanNeon-300 font-bold text-[11px]">+ Horas</button>
+                                                        <button onclick="emitirCertificadoModal({{ $vol->id }}, '{{ addslashes($vol->voluntario_nombre) }}', {{ max($vol->horas_validadas, $vol->horas) }})" class="px-3 py-1.5 rounded-lg bg-emerald-400 text-slate-950 font-black text-[11px]">Dar Certificado</button>
+                                                    @else
+                                                        <a href="{{ route('certificado.ver', ['id' => $vol->id]) }}" target="_blank" class="px-3 py-1.5 rounded-lg bg-emerald-500/20 text-emerald-300 font-bold text-[11px]">Ver Certificado</a>
+                                                    @endif
+                                                </td>
+                                            </tr>
+                                        @endforeach
+                                    </tbody>
+                                </table>
+                            </div>
+                        @endif
+                    </div>
+                </div>
+            @endforeach
+        @endif
+    </div>
+</div>
+
+<script>
+    async function enviarMensajeSoporteOng(e) {
+        e.preventDefault();
+        const input = document.getElementById('ong-chat-input');
+        const mensaje = input.value.trim();
+        if (!mensaje) return;
+
+        const res = await fetch("{{ route('contacto.enviar') }}", {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json',
+                'X-CSRF-TOKEN': '{{ csrf_token() }}'
+            },
+            body: JSON.stringify({
+                asunto: 'Consulta institucional desde Panel ONG',
+                mensaje
+            })
+        });
+        const data = await res.json();
+        if (data.ok) {
+            const box = document.getElementById('ong-chat-box');
+            box.innerHTML += `
+                <div class="flex flex-col items-end space-y-0.5">
+                    <span class="text-[10px] font-mono text-slate-400">Tu ONG • Ahora</span>
+                    <div class="max-w-sm px-3.5 py-2.5 rounded-2xl rounded-tr-sm bg-slate-800 text-white text-xs">${mensaje}</div>
+                </div>
+            `;
+            box.scrollTop = box.scrollHeight;
+            input.value = '';
         }
-        if (btnCerrarConvocatoria && modalConvocatoria) {
-            btnCerrarConvocatoria.addEventListener('click', () => modalConvocatoria.classList.remove('activo'));
-        }
-        if (btnCancelarConvocatoria && modalConvocatoria) {
-            btnCancelarConvocatoria.addEventListener('click', () => modalConvocatoria.classList.remove('activo'));
-        }
-        if (modalConvocatoria) {
-            modalConvocatoria.addEventListener('click', (e) => {
-                if (e.target === modalConvocatoria) modalConvocatoria.classList.remove('activo');
+    }
+
+    function abrirModalEditarPerfilOng() {
+        Swal.fire({
+            title: 'Editar Perfil Institucional ONG',
+            html: `
+                <div class="text-left space-y-3 pt-2">
+                    <div>
+                        <label class="block text-[10px] font-bold uppercase text-slate-400 mb-1">Nombre de la Organización *</label>
+                        <input type="text" id="perf-ong-name" value="{{ addslashes($user->name) }}" class="w-full px-3 py-2 rounded-xl bg-slate-950 border border-slate-800 text-white text-xs">
+                    </div>
+                    <div class="grid grid-cols-2 gap-2">
+                        <div>
+                            <label class="block text-[10px] font-bold uppercase text-slate-400 mb-1">Teléfono Institucional</label>
+                            <input type="text" id="perf-ong-tel" value="{{ addslashes($user->telefono ?? '') }}" placeholder="984000000" class="w-full px-3 py-2 rounded-xl bg-slate-950 border border-slate-800 text-white text-xs">
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-bold uppercase text-slate-400 mb-1">Distrito Sede Cusco</label>
+                            <input type="text" id="perf-ong-dist" value="{{ addslashes($user->distrito ?? 'Cusco Centro') }}" class="w-full px-3 py-2 rounded-xl bg-slate-950 border border-slate-800 text-white text-xs">
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-[10px] font-bold uppercase text-slate-400 mb-1">Nueva Contraseña (Opcional)</label>
+                        <input type="password" id="perf-ong-pass" placeholder="Dejar vacío para conservar actual" class="w-full px-3 py-2 rounded-xl bg-slate-950 border border-slate-800 text-white text-xs">
+                    </div>
+                </div>
+            `,
+            showCancelButton: true,
+            confirmButtonText: 'Guardar Cambios',
+            cancelButtonText: 'Cancelar',
+            confirmButtonColor: '#f59e0b',
+            background: '#0f172a',
+            color: '#fff',
+            preConfirm: () => {
+                return fetch("{{ route('perfil.actualizar') }}", {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'Accept': 'application/json', 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
+                    body: JSON.stringify({
+                        name: document.getElementById('perf-ong-name').value.trim(),
+                        telefono: document.getElementById('perf-ong-tel').value.trim(),
+                        distrito: document.getElementById('perf-ong-dist').value.trim(),
+                        password: document.getElementById('perf-ong-pass').value
+                    })
+                }).then(r => r.json());
+            }
+        }).then(res => {
+            if (res.isConfirmed && res.value.ok) {
+                Swal.fire({ title: '¡Perfil Actualizado!', text: res.value.message, icon: 'success', background: '#0f172a', color: '#fff' })
+                    .then(() => window.location.reload());
+            }
+        });
+    }
+
+    function abrirExpedientePostulante(postulacionId) {
+        fetch(`/postulacion/${postulacionId}/expediente`, { headers: { 'Accept': 'application/json' } })
+        .then(res => res.json())
+        .then(data => {
+            const p = data.postulacion;
+            Swal.fire({
+                title: `Expediente: ${p.voluntario_nombre}`,
+                html: `
+                    <div class="text-left space-y-2 text-xs text-slate-300 pt-2">
+                        <p><b>Universidad:</b> ${p.universidad || 'No especificada'}</p>
+                        <p><b>Carrera:</b> ${p.voluntario_carrera || 'Estudiante'}</p>
+                        <p><b>DNI:</b> ${p.voluntario_dni || '---'} • <b>Tel:</b> ${p.telefono_contacto || '---'}</p>
+                        <p class="pt-2 border-t border-slate-800">${p.motivacion || 'Sin descripción.'}</p>
+                    </div>
+                `,
+                showCancelButton: true,
+                confirmButtonText: 'Aceptar (-1 cupo)',
+                cancelButtonText: 'Cerrar',
+                confirmButtonColor: '#10b981',
+                background: '#0f172a',
+                color: '#fff'
+            }).then((res) => { if (res.isConfirmed) actualizarSolicitud(postulacionId, 'Aprobada'); });
+        });
+    }
+
+    function abrirModalAvance(postulacionId, nombreVoluntario) {
+        const hoy = new Date().toISOString().split('T')[0];
+        Swal.fire({
+            title: 'Registrar Avance / Asistencia',
+            html: `
+                <div class="text-left space-y-3 pt-1">
+                    <p class="text-xs text-slate-400">Voluntario: <b class="text-white">${nombreVoluntario}</b></p>
+                    <div class="grid grid-cols-2 gap-2">
+                        <input type="date" id="av-fecha" value="${hoy}" class="px-3 py-2 rounded-xl bg-slate-950 border border-slate-800 text-white text-xs">
+                        <input type="number" id="av-horas" value="4" min="1" max="40" class="px-3 py-2 rounded-xl bg-slate-950 border border-slate-800 text-white text-xs font-bold">
+                    </div>
+                    <input type="text" id="av-actividad" placeholder="Actividad realizada..." class="w-full px-3 py-2 rounded-xl bg-slate-950 border border-slate-800 text-white text-xs">
+                </div>
+            `,
+            showCancelButton: true,
+            confirmButtonText: 'Guardar Avance',
+            confirmButtonColor: '#0ea5e9',
+            background: '#0f172a',
+            color: '#fff',
+            preConfirm: () => fetch(`/postulacion/${postulacionId}/registrar-avance`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', 'Accept': 'application/json', 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
+                body: JSON.stringify({
+                    fecha: document.getElementById('av-fecha').value,
+                    horas_registradas: document.getElementById('av-horas').value,
+                    actividad: document.getElementById('av-actividad').value.trim()
+                })
+            }).then(r => r.json())
+        }).then(res => { if (res.isConfirmed) window.location.reload(); });
+    }
+
+    function emitirCertificadoModal(postulacionId, nombreVoluntario, horasSugeridas) {
+        Swal.fire({
+            title: 'Emitir Certificado Oficial',
+            html: `
+                <div class="text-left space-y-3 pt-1">
+                    <p class="text-xs text-slate-300">Voluntario: <b>${nombreVoluntario}</b></p>
+                    <input type="number" id="input-horas-cumplidas" value="${horasSugeridas}" min="1" max="500" class="w-full px-3 py-2 rounded-xl bg-slate-950 border border-emerald-500/40 text-white text-sm font-black">
+                    <textarea id="input-resena-ong" rows="2" class="w-full px-3 py-2 rounded-xl bg-slate-950 border border-slate-800 text-white text-xs">Excelente compromiso y trabajo en equipo.</textarea>
+                </div>
+            `,
+            showCancelButton: true,
+            confirmButtonColor: '#10b981',
+            confirmButtonText: 'Emitir Certificado',
+            background: '#0f172a',
+            color: '#fff'
+        }).then(result => {
+            if (result.isConfirmed) {
+                actualizarSolicitud(postulacionId, 'Completada', document.getElementById('input-horas-cumplidas').value, 5, document.getElementById('input-resena-ong').value);
+            }
+        });
+    }
+
+    function actualizarSolicitud(id, estado, horasValidadas = null, calificacion = 5, resenaOng = '') {
+        fetch(`/postulacion/${id}/estado`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'Accept': 'application/json', 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
+            body: JSON.stringify({ estado, horas_validadas: horasValidadas, calificacion, resena_ong: resenaOng })
+        }).then(() => window.location.reload());
+    }
+
+    function toggleEstadoConv(id) {
+        fetch(`/convocatoria/${id}/toggle-estado`, {
+            method: 'POST',
+            headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}', 'Accept': 'application/json' }
+        }).then(() => window.location.reload());
+    }
+
+    function eliminarConvocatoria(id) {
+        Swal.fire({ title: '¿Eliminar campaña?', icon: 'warning', showCancelButton: true, confirmButtonColor: '#e11d48', background: '#0f172a', color: '#fff' })
+            .then(res => {
+                if (res.isConfirmed) {
+                    fetch(`/eliminar-convocatoria/${id}`, { method: 'DELETE', headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}' } })
+                        .then(() => window.location.reload());
+                }
             });
-        }
-    </script>
-</body>
-</html>
+    }
+</script>
+@endsection

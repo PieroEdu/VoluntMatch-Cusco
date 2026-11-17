@@ -1,217 +1,303 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Contacto y Soporte - VoluntMatch Cusco</title>
-    <!-- Favicon -->
-    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%232E7D32'><path d='M7 14s-1 0-1-1 1-4 5-4 5 3 5 4-1 1-1 1zm4-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6m-5.784 6A2.24 2.24 0 0 1 5 13c0-1.355.68-2.75 1.936-3.72A6.3 6.3 0 0 0 5 9c-4 0-5 3-5 4s1 1 1 1zM4.5 8a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5'/></svg>">
-    <!-- Bootstrap 5 CSS (CDN) -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
-    <!-- Bootstrap Icons (CDN) -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-    <!-- Hoja de estilos principal -->
-    <link rel="stylesheet" href="{{ asset('css/styles.css') }}">
-</head>
-<body>
+@extends('layouts.app')
 
-    <!-- CABECERA PRINCIPAL -->
-    <header class="header-principal">
-        <div class="header-container">
-            <div class="logo-sitio">
-                <a href="{{ route('index') }}" class="d-flex align-items-center text-decoration-none">
-                    <i class="bi bi-people-fill me-2"></i>
-                    <span style="color: var(--color-primario); font-weight: 800;">VoluntMatch</span>
-                    <span class="logo-tag">Cusco</span>
-                </a>
-            </div>
+@section('content')
+<div class="relative overflow-hidden min-h-screen">
 
-            <nav class="nav-principal">
-                <ul>
-                    <li><a href="{{ route('index') }}"><i class="bi bi-house-door"></i> Inicio</a></li>
-                    <li><a href="{{ route('oportunidades') }}"><i class="bi bi-grid-fill"></i> Oportunidades</a></li>
-                    <li><a href="{{ route('contacto') }}" class="activo"><i class="bi bi-envelope"></i> Contacto</a></li>
-                    <li><a href="{{ route('index') }}#como-funciona"><i class="bi bi-info-circle"></i> Cómo Funciona</a></li>
-                </ul>
-            </nav>
+    <!-- ========================================================================= -->
+    <!-- SECCIÓN 1: HERO PANORÁMICO CON IMAGEN DE SOPORTE Y CONECTIVIDAD EN CUSCO  -->
+    <!-- ========================================================================= -->
+    <section class="relative w-full min-h-[430px] flex items-center border-b border-white/10 overflow-hidden">
+        <img src="https://images.unsplash.com/photo-1552664730-d307ca884978?auto=format&fit=crop&w=1800&q=85"
+             alt="Centro de Atención VoluntMatch Cusco"
+             class="absolute inset-0 w-full h-full object-cover object-center opacity-30 scale-105">
+        
+        <div class="absolute inset-0 bg-gradient-to-r from-[#05070d] via-[#05070d]/85 to-[#05070d]/65"></div>
+        <div class="absolute inset-0 bg-gradient-to-t from-[#05070d] via-transparent to-[#05070d]/70"></div>
+        <div class="absolute inset-0 opacity-20" style="background-image: radial-gradient(#38bdf8 1px, transparent 1px); background-size: 28px 28px;"></div>
 
-            <div class="acciones-usuario">
-                @auth
-                <div class="dropdown">
-                    <button class="btn btn-outline-success dropdown-toggle d-flex align-items-center gap-2 fw-semibold" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                        <i class="bi bi-person-circle fs-5"></i>
-                        <span>{{ Auth::user()->name }}</span>
-                    </button>
-                    <ul class="dropdown-menu dropdown-menu-end shadow">
-                        <li><a class="dropdown-item" href="{{ route('home') }}"><i class="bi bi-speedometer2 me-2"></i>Mi Panel</a></li>
-                        <li><hr class="dropdown-divider"></li>
-                        <li><a class="dropdown-item text-danger" href="{{ route('logout') }}"><i class="bi bi-box-arrow-right me-2"></i>Cerrar Sesión</a></li>
-                    </ul>
+        <canvas id="canvas-hero-contacto" class="absolute inset-0 w-full h-full pointer-events-none"></canvas>
+
+        <div class="relative z-10 max-w-6xl mx-auto px-6 py-16 w-full gsap-3d-reveal">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-end">
+                <div class="lg:col-span-8 space-y-5">
+                    <div class="inline-flex items-center gap-2.5 px-4 py-1.5 rounded-full bg-brand-500/15 border border-brand-500/35 backdrop-blur-md">
+                        <span class="w-2 h-2 rounded-full bg-brand-400 animate-ping"></span>
+                        <span class="font-mono text-[11px] font-bold text-brand-300 uppercase tracking-widest">
+                            Soporte Académico & Institucional • Cusco
+                        </span>
+                    </div>
+
+                    <h1 class="text-4xl sm:text-6xl font-black text-white tracking-tight leading-[1.06] drop-shadow-2xl">
+                        Centro de Atención <span class="text-transparent bg-clip-text bg-gradient-to-r from-brand-400 via-emerald-300 to-cyanNeon-400">VoluntMatch</span> en tiempo real.
+                    </h1>
                 </div>
-                @else
-                <a href="{{ route('login') }}" class="btn-custom btn-outline-custom">
-                    <i class="bi bi-box-arrow-in-right"></i> Ingresar
-                </a>
-                <a href="{{ route('registro-voluntario') }}" class="btn-custom btn-primary-custom">
-                    <i class="bi bi-person-plus"></i> Registrarse
-                </a>
-                @endauth
-            </div>
 
-            <button class="boton-menu-movil" aria-label="Abrir menú de navegación">
-                <i class="bi bi-list"></i>
-            </button>
-        </div>
-    </header>
-
-    <!-- MAIN: CONTACTO -->
-    <main class="py-5">
-        <div class="container-ancho px-3">
-            
-            <div class="encabezado-seccion text-center mb-5">
-                <span class="badge bg-success-subtle text-success px-3 py-1 mb-2 fw-semibold">Atención al Usuario</span>
-                <h1 class="h2 fw-bold" style="color: #1A202C;">Contacto y Soporte Institucional</h1>
-                <p class="text-muted">¿Tienes dudas sobre convenios de voluntariado o necesitas asistencia técnica? Escríbenos.</p>
-                <div class="linea-verde"></div>
-            </div>
-
-            <div class="row g-4 justify-content-center">
-                <div class="col-lg-5">
-                    <div class="p-4 bg-white rounded-3 border shadow-sm h-100">
-                        <h3 class="h5 fw-bold mb-3" style="color: #2D3748;">
-                            <i class="bi bi-geo-alt-fill text-danger me-2"></i> Sede de Coordinación
-                        </h3>
-                        <p class="text-secondary small mb-4">
-                            Iniciativa desarrollada en articulación con la Escuela de Ingeniería de Sistemas de la Universidad Continental en Cusco.
-                        </p>
-
-                        <div class="d-flex flex-column gap-3 mb-4">
-                            <div class="d-flex align-items-start gap-3">
-                                <div class="metrica-icono m-0" style="width: 44px; height: 44px; font-size: 1.2rem;">
-                                    <i class="bi bi-pin-map-fill"></i>
-                                </div>
-                                <div>
-                                    <div class="fw-bold small">Ubicación</div>
-                                    <div class="text-muted small">Campus Universidad Continental, San Sebastián, Cusco - Perú.</div>
-                                </div>
-                            </div>
-
-                            <div class="d-flex align-items-start gap-3">
-                                <div class="metrica-icono m-0" style="width: 44px; height: 44px; font-size: 1.2rem;">
-                                    <i class="bi bi-envelope-at-fill"></i>
-                                </div>
-                                <div>
-                                    <div class="fw-bold small">Correo de Atención</div>
-                                    <div class="text-muted small">70959838@continental.edu.pe</div>
-                                </div>
-                            </div>
+                <div class="lg:col-span-4 p-6 rounded-2xl bg-slate-950/80 backdrop-blur-xl border border-white/10 space-y-3 shadow-2xl">
+                    <div class="flex items-center gap-3 pb-2 border-b border-white/10">
+                        <div class="w-9 h-9 rounded-xl bg-white p-1.5 flex items-center justify-center shrink-0">
+                            <img src="https://i.postimg.cc/vDRFtQn1/Universiadad-Continental-Isotipo-removebg-preview.png"
+                                 onerror="this.src='https://i.postimg.cc/43YJt89w/logo-removebg-preview.png'"
+                                 alt="Universidad Continental" class="w-full h-full object-contain">
+                        </div>
+                        <div>
+                            <span class="font-mono text-[10px] text-brand-400 uppercase font-bold block">Sede Operativa</span>
+                            <strong class="text-xs text-white block">Universidad Continental — Cusco</strong>
                         </div>
                     </div>
-                </div>
-
-                <div class="col-lg-7">
-                    <div class="p-4 bg-white rounded-3 border shadow-sm">
-                        <h3 class="h5 fw-bold mb-2" style="color: #2D3748;">
-                            <i class="bi bi-chat-left-dots-fill text-success me-2"></i> Envíanos un Mensaje
-                        </h3>
-                        <p class="text-muted small mb-4">Responderemos a tu correo electrónico registrado a la brevedad posible.</p>
-
-                        <form id="form-contacto" novalidate>
-                            <div class="form-grid-dos">
-                                <div class="form-campo">
-                                    <label for="contacto-nombre">Tu Nombre <span class="text-danger">*</span></label>
-                                    <input type="text" id="contacto-nombre" placeholder="Ej. Piero Edu Alcca" required>
-                                </div>
-                                <div class="form-campo">
-                                    <label for="contacto-correo">Correo Electrónico <span class="text-danger">*</span></label>
-                                    <input type="email" id="contacto-correo" placeholder="ejemplo@correo.com" required>
-                                </div>
-                            </div>
-
-                            <div class="form-campo">
-                                <label for="contacto-asunto">Motivo de Consulta <span class="text-danger">*</span></label>
-                                <select id="contacto-asunto" required>
-                                    <option value="">Selecciona asunto...</option>
-                                    <option value="Dudas sobre Convocatoria">Consulta sobre una Convocatoria Específica</option>
-                                    <option value="Registro de Nueva ONG">Registro y Convenio para Nueva ONG en Cusco</option>
-                                    <option value="Certificación y Horas">Dudas sobre Certificación y Convalidación de Horas</option>
-                                    <option value="Soporte Técnico">Problemas Técnicos con la Plataforma</option>
-                                </select>
-                            </div>
-
-                            <div class="form-campo">
-                                <label for="contacto-mensaje">Detalle de tu Mensaje <span class="text-danger">*</span></label>
-                                <textarea id="contacto-mensaje" rows="4" placeholder="Escribe aquí tu consulta..." required></textarea>
-                            </div>
-
-                            <div class="d-grid mt-4">
-                                <button type="submit" class="btn-custom btn-primary-custom py-2 fs-6">
-                                    <i class="bi bi-send-fill me-2"></i> Enviar Mensaje
-                                </button>
-                            </div>
-                        </form>
+                    <p class="text-xs text-slate-300 leading-relaxed">
+                        Canal directo con la Coordinación de Proyección Social. Las respuestas llegan directamente a tu panel de usuario.
+                    </p>
+                    <div class="pt-1 flex items-center justify-between font-mono text-[11px] text-slate-400">
+                        <span>Atención Digital</span>
+                        <span class="text-emerald-400 font-bold">Respuesta en Dashboard</span>
                     </div>
                 </div>
             </div>
-
         </div>
-    </main>
+    </section>
 
-    <!-- PIE DE PÁGINA -->
-    <footer class="footer-sitio">
-        <div class="footer-grid">
-            <div class="footer-col">
-                <div class="d-flex align-items-center mb-3">
-                    <i class="bi bi-people-fill text-success fs-3 me-2"></i>
-                    <h4 class="mb-0 text-white">VoluntMatch Cusco</h4>
+    <div class="fixed inset-0 pointer-events-none z-0">
+        <div class="absolute top-1/3 left-1/2 -translate-x-1/2 w-[900px] h-[500px] bg-brand-500/10 rounded-full blur-[160px]"></div>
+        <div class="absolute bottom-10 right-10 w-[500px] h-[400px] bg-cyanNeon-500/10 rounded-full blur-[150px]"></div>
+        <canvas id="canvas-contacto-particulas" class="w-full h-full"></canvas>
+    </div>
+
+    <!-- ========================================================================= -->
+    <!-- SECCIÓN 2: FORMULARIO DE ATENCIÓN + RELOJ OFICIAL + CLIMA + MAPA CUSCO    -->
+    <!-- ========================================================================= -->
+    <div class="relative z-10 py-14 px-6 max-w-7xl mx-auto w-full">
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+            
+            <!-- FORMULARIO DE CONTACTO -->
+            <div class="lg:col-span-7 glass-card p-8 rounded-3xl border border-white/10 space-y-6 gsap-3d-reveal">
+                <div class="flex items-center justify-between border-b border-white/10 pb-4">
+                    <h2 class="text-xl font-black text-white flex items-center gap-2.5">
+                        <i class="bi bi-send-fill text-brand-400"></i> Envíanos una Consulta
+                    </h2>
+                    <span class="font-mono text-[11px] text-emerald-400 flex items-center gap-1.5">
+                        <span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span> Conectado al Admin
+                    </span>
                 </div>
-                <p class="small text-white">
-                    Plataforma universitaria para la articulación ética de voluntariado e iniciativas de impacto en Cusco.
-                </p>
-            </div>
-            <div class="footer-col">
-                <h4>Navegación</h4>
-                <ul>
-                    <li><a href="{{ route('index') }}">Inicio</a></li>
-                    <li><a href="{{ route('oportunidades') }}">Oportunidades</a></li>
-                    <li><a href="{{ route('contacto') }}">Contacto</a></li>
-                    <li><a href="{{ route('login') }}">Iniciar Sesión</a></li>
-                </ul>
-            </div>
-            <div class="footer-col">
-                <h4>Universidad Continental</h4>
-                <p class="small text-white mb-2">Ingeniería de Sistemas e Informática</p>
-                <p class="small text-white mb-2">Asignatura: Programación Web</p>
-                <p class="small text-white">Cusco, 2026</p>
-            </div>
-            <div class="footer-col">
-                <h4><i class="bi bi-people-fill text-success me-1"></i> Creadores</h4>
-                <ul class="creadores-lista">
-                    <li><span>Piero Edu Alcca Moron</span> <span class="badge-porcentaje">100%</span></li>
-                    <li><span>Luis Angel Dueñas Quintana</span> <span class="badge-porcentaje">100%</span></li>
-                    <li><span>Patrick Antonio Leguia Choquemamani</span> <span class="badge-porcentaje">100%</span></li>
-                    <li><span>Alexis Sebastian Rojas Lopez</span> <span class="badge-porcentaje">100%</span></li>
-                </ul>
-            </div>
-        </div>
 
-        <div class="footer-creditos">
-            <div class="footer-creadores-banner">
-                <i class="bi bi-award-fill text-success me-1"></i>
-                <strong>Creadores del Proyecto:</strong>
-                <span>Piero Edu Alcca Moron <strong>100%</strong></span> •
-                <span>Luis Angel Dueñas Quintana <strong>100%</strong></span> •
-                <span>Patrick Antonio Leguia Choquemamani <strong>100%</strong></span> •
-                <span>Alexis Sebastian Rojas Lopez <strong>100%</strong></span>
-            </div>
-            <p class="mb-0 text-white">© 2026 VoluntMatch Cusco. Desarrollado por el Grupo 6. Universidad Continental. Licencia MIT.</p>
-        </div>
-    </footer>
+                @auth
+                    <div class="p-3.5 rounded-2xl bg-brand-500/10 border border-brand-500/30 text-xs text-brand-200 flex items-center gap-2.5">
+                        <i class="bi bi-person-check-fill text-brand-400 text-base"></i>
+                        <span>Sesión identificada como <strong>{{ Auth::user()->name }}</strong>. La respuesta del Administrador aparecerá en las notificaciones de tu Dashboard.</span>
+                    </div>
+                @endauth
 
-    <!-- Bootstrap 5 JS Bundle -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-    <!-- Scripts -->
-    <script src="{{ asset('js/main.js') }}"></script>
-    <script src="{{ asset('js/validaciones.js') }}"></script>
-</body>
-</html>
+                <form onsubmit="enviarContacto(event)" class="space-y-4">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block font-mono text-[11px] font-bold text-slate-400 uppercase mb-2">Nombre Completo *</label>
+                            <input type="text" id="nombre" required value="{{ Auth::user()->name ?? '' }}" placeholder="Ej. Piero Edu Alcca" class="w-full px-4 py-3 rounded-xl bg-slate-950/90 border border-white/10 text-white text-xs focus:border-brand-500 focus:outline-none">
+                        </div>
+                        <div>
+                            <label class="block font-mono text-[11px] font-bold text-slate-400 uppercase mb-2">Correo Institucional o Personal *</label>
+                            <input type="email" id="correo" required value="{{ Auth::user()->email ?? '' }}" {{ Auth::check() ? 'readonly' : '' }} placeholder="estudiante@continental.edu.pe" class="w-full px-4 py-3 rounded-xl bg-slate-950/90 border border-white/10 text-white text-xs focus:border-brand-500 focus:outline-none">
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block font-mono text-[11px] font-bold text-slate-400 uppercase mb-2">Asunto / Tipo de Consulta *</label>
+                        <select id="asunto" class="w-full px-4 py-3 rounded-xl bg-slate-950/90 border border-white/10 text-white text-xs focus:border-brand-500 focus:outline-none">
+                            <option value="Acreditación de Horas y Certificados QR">Acreditación de 100 Horas y Certificados QR</option>
+                            <option value="Consulta de Organización / ONG">Consulta de Organización / ONG Aliada</option>
+                            <option value="Soporte Técnico de Cuenta o Expediente">Soporte Técnico de Cuenta o Expediente</option>
+                            <option value="Consulta sobre Donaciones y Vouchers">Consulta sobre Donaciones y Vouchers</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="block font-mono text-[11px] font-bold text-slate-400 uppercase mb-2">Mensaje Detallado *</label>
+                        <textarea id="mensaje" rows="4" required placeholder="Describe tu consulta o solicitud para la Coordinación..." class="w-full px-4 py-3 rounded-xl bg-slate-950/90 border border-white/10 text-white text-xs focus:border-brand-500 focus:outline-none"></textarea>
+                    </div>
+
+                    <button type="submit" id="btn-enviar-contacto" class="w-full py-4 rounded-2xl bg-gradient-to-r from-brand-500 via-emerald-400 to-cyanNeon-400 text-slate-950 font-black text-xs sm:text-sm uppercase tracking-wider shadow-xl shadow-brand-500/25 hover:scale-[1.01] transition-all flex items-center justify-center gap-2">
+                        <i class="bi bi-send-check-fill text-base"></i> Enviar Consulta al Administrador
+                    </button>
+                </form>
+            </div>
+
+            <!-- COLUMNA DERECHA: RELOJ EN VIVO + API CLIMA + MAPA CUSCO -->
+            <div class="lg:col-span-5 space-y-5 gsap-3d-reveal">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div class="glass-card p-5 rounded-3xl border border-cyanNeon-500/30 space-y-1">
+                        <div class="flex items-center justify-between text-cyanNeon-400">
+                            <span class="font-mono text-[10px] font-bold uppercase">Reloj Cusco</span>
+                            <i class="bi bi-clock-fill"></i>
+                        </div>
+                        <h4 class="font-mono text-xl font-black text-white" id="api-reloj-hora-grande">--:--:--</h4>
+                        <span class="text-[11px] text-slate-400 block" id="api-reloj-fecha-texto">Perú (UTC-5)</span>
+                    </div>
+
+                    <div class="glass-card p-5 rounded-3xl border border-brand-500/30 space-y-1">
+                        <div class="flex items-center justify-between text-brand-400">
+                            <span class="font-mono text-[10px] font-bold uppercase">Clima Cusco</span>
+                            <i class="bi bi-cloud-sun-fill"></i>
+                        </div>
+                        <h4 class="font-mono text-xl font-black text-white" id="clima-temp">Cargando...</h4>
+                        <span class="text-[11px] text-slate-400 block" id="clima-estado">Sincronizando...</span>
+                    </div>
+                </div>
+
+                <div class="glass-card p-4 rounded-3xl border border-white/10 space-y-3">
+                    <div class="flex items-center justify-between px-1">
+                        <span class="text-xs font-extrabold text-white"><i class="bi bi-geo-alt-fill text-brand-400 me-1"></i> Ubicación Sede - Cusco, Perú</span>
+                        <span class="font-mono text-[10px] text-slate-400">-13.5167°, -71.9781°</span>
+                    </div>
+                    <div id="mapa-cusco" class="h-64 rounded-2xl z-10 border border-slate-800"></div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<script>
+    function actualizarRelojCuscoContacto() {
+        const elHora = document.getElementById('api-reloj-hora-grande');
+        const elFecha = document.getElementById('api-reloj-fecha-texto');
+        const ahora = new Date();
+
+        if (elHora) {
+            elHora.textContent = ahora.toLocaleTimeString('es-PE', {
+                timeZone: 'America/Lima',
+                hour12: false,
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit'
+            });
+        }
+        if (elFecha) {
+            const fechaStr = ahora.toLocaleDateString('es-PE', {
+                timeZone: 'America/Lima',
+                day: '2-digit',
+                month: 'short',
+                year: 'numeric'
+            });
+            elFecha.textContent = `${fechaStr} • Perú (UTC-5)`;
+        }
+    }
+
+    function iniciarParticulasContacto(id, isFullScreen, colorDot, colorLine) {
+        const canvas = document.getElementById(id);
+        if (!canvas) return;
+        const ctx = canvas.getContext('2d');
+        let w, h, dots = [];
+
+        function resize() {
+            w = canvas.width = isFullScreen ? window.innerWidth : canvas.offsetWidth;
+            h = canvas.height = isFullScreen ? window.innerHeight : canvas.offsetHeight;
+        }
+        window.addEventListener('resize', resize);
+        resize();
+
+        for (let i = 0; i < 40; i++) {
+            dots.push({
+                x: Math.random() * w,
+                y: Math.random() * h,
+                vx: (Math.random() - 0.5) * 0.5,
+                vy: (Math.random() - 0.5) * 0.5,
+                r: Math.random() * 1.9 + 0.9
+            });
+        }
+
+        function animate() {
+            ctx.clearRect(0, 0, w, h);
+            dots.forEach((d, i) => {
+                d.x += d.vx;
+                d.y += d.vy;
+                if (d.x < 0 || d.x > w) d.vx *= -1;
+                if (d.y < 0 || d.y > h) d.vy *= -1;
+
+                ctx.beginPath();
+                ctx.arc(d.x, d.y, d.r, 0, Math.PI * 2);
+                ctx.fillStyle = colorDot;
+                ctx.fill();
+
+                for (let j = i + 1; j < dots.length; j++) {
+                    let dist = Math.hypot(d.x - dots[j].x, d.y - dots[j].y);
+                    if (dist < 135) {
+                        ctx.beginPath();
+                        ctx.moveTo(d.x, d.y);
+                        ctx.lineTo(dots[j].x, dots[j].y);
+                        ctx.strokeStyle = `rgba(${colorLine}, ${0.14 * (1 - dist / 135)})`;
+                        ctx.lineWidth = 1;
+                        ctx.stroke();
+                    }
+                }
+            });
+            requestAnimationFrame(animate);
+        }
+        animate();
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        // Inicia el reloj de Cusco inmediatamente y cada segundo
+        actualizarRelojCuscoContacto();
+        setInterval(actualizarRelojCuscoContacto, 1000);
+
+        if (typeof L !== 'undefined' && document.getElementById('mapa-cusco')) {
+            const map = L.map('mapa-cusco').setView([-13.5167, -71.9781], 14);
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
+            L.marker([-13.5167, -71.9781]).addTo(map).bindPopup('<b>VoluntMatch Cusco</b><br>Centro Histórico • Cusco').openPopup();
+        }
+
+        fetch('https://api.open-meteo.com/v1/forecast?latitude=-13.5167&longitude=-71.9781&current_weather=true')
+            .then(res => res.json())
+            .then(data => {
+                if(data.current_weather) {
+                    document.getElementById('clima-temp').textContent = data.current_weather.temperature + ' °C';
+                    document.getElementById('clima-estado').textContent = 'Viento: ' + data.current_weather.windspeed + ' km/h';
+                }
+            });
+
+        iniciarParticulasContacto('canvas-hero-contacto', false, 'rgba(56, 189, 248, 0.55)', '52, 211, 153');
+        iniciarParticulasContacto('canvas-contacto-particulas', true, 'rgba(52, 211, 153, 0.35)', '56, 189, 248');
+    });
+
+    async function enviarContacto(e) {
+        e.preventDefault();
+        const btn = document.getElementById('btn-enviar-contacto');
+        btn.disabled = true;
+
+        try {
+            const res = await fetch("{{ route('contacto.enviar') }}", {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json',
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                },
+                body: JSON.stringify({
+                    nombre: document.getElementById('nombre').value.trim(),
+                    correo: document.getElementById('correo').value.trim(),
+                    asunto: document.getElementById('asunto').value,
+                    mensaje: document.getElementById('mensaje').value.trim()
+                })
+            });
+
+            const data = await res.json();
+            if (data.ok) {
+                if (typeof confetti === 'function') confetti({ particleCount: 120, spread: 80, origin: { y: 0.6 } });
+                Swal.fire({
+                    title: '¡Consulta Enviada al Administrador!',
+                    text: data.message,
+                    icon: 'success',
+                    background: '#0f172a',
+                    color: '#fff',
+                    confirmButtonColor: '#10b981'
+                });
+                document.getElementById('mensaje').value = '';
+            } else {
+                Swal.fire({ title: 'Atención', text: data.message || 'Verifica los campos.', icon: 'warning', background: '#0f172a', color: '#fff' });
+            }
+        } catch (err) {
+            Swal.fire({ title: 'Error', text: 'No se pudo enviar la consulta en este momento.', icon: 'error', background: '#0f172a', color: '#fff' });
+        } finally {
+            btn.disabled = false;
+        }
+    }
+</script>
+@endsection

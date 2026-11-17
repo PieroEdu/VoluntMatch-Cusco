@@ -1,202 +1,182 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Registro de Organización / ONG - VoluntMatch Cusco</title>
-    <!-- Favicon -->
-    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%232E7D32'><path d='M7 14s-1 0-1-1 1-4 5-4 5 3 5 4-1 1-1 1zm4-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6m-5.784 6A2.24 2.24 0 0 1 5 13c0-1.355.68-2.75 1.936-3.72A6.3 6.3 0 0 0 5 9c-4 0-5 3-5 4s1 1 1 1zM4.5 8a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5'/></svg>">
-    <!-- Bootstrap 5 CSS (CDN) -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
-    <!-- Bootstrap Icons (CDN) -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-    <!-- Hoja de estilos principal -->
-    <link rel="stylesheet" href="{{ asset('css/styles.css') }}">
-</head>
-<body>
+@extends('layouts.app')
 
-    <!-- CABECERA PRINCIPAL -->
-    <header class="header-principal">
-        <div class="header-container">
-            <div class="logo-sitio">
-                <a href="{{ route('index') }}" class="d-flex align-items-center text-decoration-none">
-                    <i class="bi bi-people-fill me-2"></i>
-                    <span style="color: var(--color-primario); font-weight: 800;">VoluntMatch</span>
-                    <span class="logo-tag">Cusco</span>
-                </a>
+@section('content')
+<div class="fixed inset-0 pointer-events-none z-0">
+    <div class="absolute top-20 left-1/2 -translate-x-1/2 w-[700px] h-[400px] bg-amberGlow-500/15 rounded-full blur-[160px]"></div>
+</div>
+
+<div class="relative z-10 py-12 px-6 max-w-xl mx-auto w-full">
+    <div class="glass-card p-8 rounded-3xl border border-slate-800 space-y-6">
+        
+        <div class="text-center space-y-2">
+            <div class="w-16 h-16 rounded-2xl bg-slate-950/90 border border-amberGlow-500/40 p-2 flex items-center justify-center mx-auto mb-2 shadow-lg shadow-amberGlow-500/20">
+                <img src="https://i.postimg.cc/43YJt89w/logo-removebg-preview.png" alt="VoluntMatch Cusco" class="w-full h-full object-contain">
+            </div>
+            <span class="inline-block px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider bg-amberGlow-500/20 text-amberGlow-400 border border-amberGlow-500/30">
+                <i class="bi bi-building-add me-1"></i> Alianza Institucional Cusco
+            </span>
+            <h1 class="text-2xl sm:text-3xl font-black text-white">Registro de Organización / ONG</h1>
+            <p class="text-slate-400 text-xs">Publica convocatorias y gestiona voluntarios universitarios</p>
+        </div>
+
+        <form id="form-registro-ong" onsubmit="procesarRegistroOng(event)" class="space-y-4">
+            @csrf
+            <input type="hidden" name="tipo_usuario" value="organizacion">
+
+            <div>
+                <label class="block text-xs font-bold text-slate-400 uppercase mb-1">Nombre de la Organización / ONG *</label>
+                <input type="text" name="name" required placeholder="Ej. Asociación EcoAndina Cusco" class="w-full px-4 py-3 rounded-xl bg-slate-950 border border-slate-800 text-white text-xs focus:border-amberGlow-400 focus:outline-none">
             </div>
 
-            <nav class="nav-principal">
-                <ul>
-                    <li><a href="{{ route('index') }}"><i class="bi bi-house-door"></i> Inicio</a></li>
-                    <li><a href="{{ route('oportunidades') }}"><i class="bi bi-grid-fill"></i> Oportunidades</a></li>
-                    <li><a href="{{ route('contacto') }}"><i class="bi bi-envelope"></i> Contacto</a></li>
-                    <li><a href="{{ route('index') }}#como-funciona"><i class="bi bi-info-circle"></i> Cómo Funciona</a></li>
-                </ul>
-            </nav>
-
-            <div class="acciones-usuario">
-                <a href="{{ route('login') }}" class="btn-custom btn-outline-custom">
-                    <i class="bi bi-box-arrow-in-right"></i> Ingresar
-                </a>
-                <a href="{{ route('registro-voluntario') }}" class="btn-custom btn-primary-custom">
-                    <i class="bi bi-person-plus"></i> Soy Voluntario
-                </a>
+            <!-- SELECTOR INTELIGENTE DE RUC SUNAT (20 / 10 + 9 DÍGITOS) -->
+            <div class="p-4 rounded-2xl bg-slate-950/70 border border-slate-800 space-y-2">
+                <div class="flex items-center justify-between">
+                    <label class="block text-xs font-bold text-slate-400 uppercase">RUC Institucional (SUNAT - 11 dígitos) *</label>
+                    <span id="preview-ruc-ong" class="text-[11px] font-mono font-black text-amberGlow-400">RUC: 20_________</span>
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-12 gap-2">
+                    <div class="sm:col-span-5">
+                        <select name="ruc_prefijo" id="ruc_prefijo" onchange="actualizarPreviewRuc()" class="w-full px-3 py-3 rounded-xl bg-slate-900 border border-slate-700 text-amberGlow-400 font-bold text-xs focus:border-amberGlow-400 focus:outline-none">
+                            <option value="20">20 • Persona Jurídica / ONG</option>
+                            <option value="10">10 • Persona Natural / Promotor</option>
+                        </select>
+                    </div>
+                    <div class="sm:col-span-7">
+                        <input type="text" name="ruc_resto" id="ruc_resto" oninput="actualizarPreviewRuc()" required maxlength="9" minlength="9" pattern="[0-9]{9}" inputmode="numeric" placeholder="Completa los 9 dígitos restantes" class="w-full px-4 py-3 rounded-xl bg-slate-900 border border-slate-700 text-white font-mono text-xs tracking-wider focus:border-amberGlow-400 focus:outline-none">
+                    </div>
+                </div>
             </div>
 
-            <button class="boton-menu-movil" aria-label="Abrir menú de navegación">
-                <i class="bi bi-list"></i>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-xs font-bold text-slate-400 uppercase mb-1">Distrito Sede en Cusco *</label>
+                    <select name="distrito" required class="w-full px-4 py-3 rounded-xl bg-slate-950 border border-slate-800 text-slate-300 text-xs focus:border-amberGlow-400 focus:outline-none">
+                        <option value="Cusco Centro">Cusco Centro</option>
+                        <option value="San Jerónimo">San Jerónimo</option>
+                        <option value="Wanchaq">Wanchaq</option>
+                        <option value="Santiago">Santiago</option>
+                        <option value="San Sebastián">San Sebastián</option>
+                        <option value="Poroy">Poroy</option>
+                        <option value="Saylla">Saylla</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-400 uppercase mb-1">Teléfono / WhatsApp *</label>
+                    <input type="text" name="telefono" required maxlength="9" placeholder="Ej. 984123456" class="w-full px-4 py-3 rounded-xl bg-slate-950 border border-slate-800 text-white text-xs focus:border-amberGlow-400 focus:outline-none">
+                </div>
+            </div>
+
+            <div>
+                <label class="block text-xs font-bold text-slate-400 uppercase mb-1">Correo Institucional *</label>
+                <input type="email" name="email" required placeholder="contacto@ongcusco.org" class="w-full px-4 py-3 rounded-xl bg-slate-950 border border-slate-800 text-white text-xs focus:border-amberGlow-400 focus:outline-none">
+            </div>
+
+            <div>
+                <label class="block text-xs font-bold text-slate-400 uppercase mb-1">Misión / Área de Trabajo Social</label>
+                <textarea name="mision" rows="2" placeholder="Describe brevemente la labor social de su organización en Cusco..." class="w-full px-4 py-2.5 rounded-xl bg-slate-950 border border-slate-800 text-white text-xs focus:border-amberGlow-400 focus:outline-none"></textarea>
+            </div>
+
+            <div>
+                <label class="block text-xs font-bold text-slate-400 uppercase mb-1">Contraseña de Acceso *</label>
+                <input type="password" name="password" required minlength="6" placeholder="Mínimo 6 caracteres" class="w-full px-4 py-3 rounded-xl bg-slate-950 border border-slate-800 text-white text-xs focus:border-amberGlow-400 focus:outline-none">
+            </div>
+
+            <!-- CONSENTIMIENTO LEGAL OBLIGATORIO (LEY N.° 29733) -->
+            <div class="p-3.5 rounded-2xl bg-slate-950/90 border border-slate-800">
+                <label class="flex items-start gap-2.5 cursor-pointer text-[11px] text-slate-300 leading-relaxed">
+                    <input type="checkbox" id="acepto_legal_ong" name="acepto_terminos" required class="mt-0.5 w-4 h-4 rounded border-slate-700 bg-slate-900 text-amberGlow-400 focus:ring-amberGlow-400">
+                    <span>
+                        Declaramos que la información institucional es verídica y aceptamos la <a href="{{ route('legal') }}#politica-privacidad" target="_blank" class="text-amberGlow-400 font-bold hover:underline">Política de Privacidad</a> (Ley N.° 29733) y los <a href="{{ route('legal') }}#terminos-uso" target="_blank" class="text-amberGlow-400 font-bold hover:underline">Términos de Uso</a> de VoluntMatch Cusco. *
+                    </span>
+                </label>
+            </div>
+
+            <button type="submit" id="btn-submit-ong" class="btn-shine w-full py-3.5 rounded-xl bg-gradient-to-r from-amberGlow-400 to-brand-500 text-slate-950 font-black text-xs uppercase tracking-wider shadow-lg shadow-amberGlow-500/20 hover:scale-[1.01] transition-all mt-2">
+                <i class="bi bi-check-circle-fill me-1"></i> Registrar Organización Aliada
             </button>
+        </form>
+
+        <div class="text-center pt-2 text-xs text-slate-400">
+            ¿Ya tienen cuenta registrada? <a href="{{ route('login') }}" class="text-amberGlow-400 font-bold hover:underline">Iniciar Sesión</a>
         </div>
-    </header>
+    </div>
+</div>
 
-    <!-- MAIN: FORMULARIO DE REGISTRO DE ONG -->
-    <main class="py-5">
-        <div class="container">
-            <div class="formulario-contenedor">
-                <div class="formulario-cabecera">
-                    <div class="metrica-icono mx-auto mb-3" style="background-color: #FFF3E0; color: #E65100;">
-                        <i class="bi bi-building"></i>
-                    </div>
-                    <h2>Registro de Organización Social / ONG</h2>
-                    <p>Publica convocatorias y conecta con el talento universitario de Cusco.</p>
-                </div>
+<script>
+    function actualizarPreviewRuc() {
+        const prefijo = document.getElementById('ruc_prefijo').value;
+        const inputResto = document.getElementById('ruc_resto');
+        inputResto.value = inputResto.value.replace(/[^0-9]/g, '').slice(0, 9);
+        const faltan = '_'.repeat(9 - inputResto.value.length);
+        const completo = prefijo + inputResto.value + faltan;
+        const badge = document.getElementById('preview-ruc-ong');
+        badge.textContent = `RUC: ${completo}`;
+        badge.className = inputResto.value.length === 9
+            ? 'text-[11px] font-mono font-black text-emerald-400'
+            : 'text-[11px] font-mono font-black text-amberGlow-400';
+    }
 
-                <form id="form-registro-ong" action="{{ route('registrar') }}" method="POST" novalidate>
-                    @csrf
-                    <!-- Nombre y RUC -->
-                    <div class="form-grid-dos">
-                        <div class="form-campo">
-                            <label for="ong-razon">Razón Social / Nombre de la ONG <span class="text-danger">*</span></label>
-                            <input type="text" name="name" id="ong-razon" placeholder="Ej. Hogar Infantil Azul Wasi" required>
-                        </div>
-                        <div class="form-campo">
-                            <label for="ong-ruc">RUC de la Organización (11 dígitos) <span class="text-danger">*</span></label>
-                            <input type="text" name="ruc" id="ong-ruc" maxlength="11" placeholder="Ej. 20601234567" required>
-                        </div>
-                    </div>
+    function procesarRegistroOng(e) {
+        e.preventDefault();
+        const resto = document.getElementById('ruc_resto').value;
+        if (resto.length !== 9) {
+            Swal.fire({ title: 'RUC Incompleto', text: 'Debes ingresar exactamente los 9 dígitos restantes del RUC.', icon: 'warning', background: '#0f172a', color: '#fff' });
+            return;
+        }
 
-                    <!-- Distrito y Teléfono -->
-                    <div class="form-grid-dos">
-                        <div class="form-campo">
-                            <label for="ong-distrito">Distrito en Cusco <span class="text-danger">*</span></label>
-                            <select name="distrito" id="ong-distrito" required>
-                                <option value="">Selecciona distrito...</option>
-                                <option value="Cusco Centro">Cusco Centro</option>
-                                <option value="San Jerónimo">San Jerónimo</option>
-                                <option value="Wanchaq">Wanchaq</option>
-                                <option value="Santiago">Santiago</option>
-                                <option value="San Sebastián">San Sebastián</option>
-                                <option value="Saylla / Oropesa">Saylla / Oropesa</option>
-                            </select>
-                        </div>
-                        <div class="form-campo">
-                            <label for="ong-telefono">Teléfono / Celular de Contacto <span class="text-danger">*</span></label>
-                            <input type="tel" name="telefono" id="ong-telefono" maxlength="9" placeholder="984556677" required>
-                        </div>
-                    </div>
+        if (!document.getElementById('acepto_legal_ong').checked) {
+            Swal.fire({ title: 'Consentimiento Requerido', text: 'Debes aceptar la Política de Privacidad y los Términos de Uso para registrar la organización.', icon: 'warning', background: '#0f172a', color: '#fff' });
+            return;
+        }
 
-                    <!-- Correo de la ONG -->
-                    <div class="form-campo">
-                        <label for="ong-correo">Correo Electrónico Institucional <span class="text-danger">*</span></label>
-                        <input type="email" name="email" id="ong-correo" placeholder="contacto@organizacion.org.pe" required>
-                    </div>
+        const btn = document.getElementById('btn-submit-ong');
+        btn.disabled = true;
+        btn.innerHTML = '<i class="bi bi-arrow-repeat animate-spin me-1"></i> Registrando ONG...';
 
-                    <!-- Misión Social -->
-                    <div class="form-campo">
-                        <label for="ong-mision">Misión y Propósito Comunitario <span class="text-danger">*</span></label>
-                        <textarea name="mision" id="ong-mision" rows="3" placeholder="Describe brevemente a qué se dedica la organización y a qué población cusqueña apoya..." required></textarea>
-                    </div>
+        const formData = new FormData(document.getElementById('form-registro-ong'));
 
-                    <!-- Contraseña -->
-                    <div class="form-campo">
-                        <label for="ong-password">Contraseña para Gestión de Convocatorias <span class="text-danger">*</span></label>
-                        <input type="password" name="password" id="ong-password" placeholder="Mínimo 6 caracteres" required>
-                    </div>
+        fetch('{{ route("registrar") }}', {
+            method: 'POST',
+            headers: {
+                'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                'Accept': 'application/json'
+            },
+            body: formData
+        })
+        .then(res => {
+            if (!res.ok) return res.json().then(err => { throw err; });
+            return res.json();
+        })
+        .then(data => {
+            if (typeof confetti === 'function') confetti({ particleCount: 140, spread: 80, origin: { y: 0.6 } });
+            Swal.fire({
+                title: '¡ONG Registrada con Éxito!',
+                text: 'Su RUC ha sido registrado y pasará a verificación institucional. Redirigiendo al Panel...',
+                icon: 'success',
+                background: '#0f172a',
+                color: '#fff',
+                confirmButtonColor: '#f59e0b',
+                confirmButtonText: 'Entrar al Panel ONG'
+            }).then(() => {
+                window.location.href = data.redirect || "{{ route('home') }}";
+            });
+        })
+        .catch(err => {
+            btn.disabled = false;
+            btn.innerHTML = '<i class="bi bi-check-circle-fill me-1"></i> Registrar Organización Aliada';
+            let msg = 'Revisa los datos ingresados.';
+            if (err.errors) msg = Object.values(err.errors).flat().join('<br>');
+            else if (err.message) msg = err.message;
 
-                    <div class="p-3 mb-4 rounded bg-light border small text-muted">
-                        <i class="bi bi-shield-lock-fill text-success me-1"></i>
-                        Todas las organizaciones registradas pasan por un protocolo ético de acreditación institucional según el Criterio 4.2 del proyecto.
-                    </div>
-
-                    <div class="d-grid">
-                        <button type="submit" class="btn-custom btn-accent-custom py-2 fs-6">
-                            <i class="bi bi-building-check me-2"></i> Registrar y Crear Cuenta de ONG
-                        </button>
-                    </div>
-                </form>
-
-                <div class="text-center mt-4 pt-3 border-top">
-                    <p class="small text-muted mb-1">¿Tu ONG ya está registrada?</p>
-                    <a href="{{ route('login') }}" class="fw-bold" style="color: var(--color-primario);">Inicia Sesión Aquí</a>
-                </div>
-            </div>
-        </div>
-    </main>
-
-    <!-- PIE DE PÁGINA -->
-    <footer class="footer-sitio">
-        <div class="footer-grid">
-            <div class="footer-col">
-                <div class="d-flex align-items-center mb-3">
-                    <i class="bi bi-people-fill text-success fs-3 me-2"></i>
-                    <h4 class="mb-0 text-white">VoluntMatch Cusco</h4>
-                </div>
-                <p class="small text-white">
-                    Alianza estratégica entre la academia y el ecosistema social para el desarrollo sostenible de Cusco.
-                </p>
-            </div>
-            <div class="footer-col">
-                <h4>Navegación</h4>
-                <ul>
-                    <li><a href="{{ route('index') }}">Inicio</a></li>
-                    <li><a href="{{ route('oportunidades') }}">Oportunidades</a></li>
-                    <li><a href="{{ route('contacto') }}">Contacto y Soporte</a></li>
-                    <li><a href="{{ route('login') }}">Iniciar Sesión</a></li>
-                </ul>
-            </div>
-            <div class="footer-col">
-                <h4>Marco Ético</h4>
-                <ul>
-                    <li><a href="#">Ley N.° 29733 (Privacidad)</a></li>
-                    <li><a href="#">Verificación de Entidades</a></li>
-                    <li><a href="#">Licencia Open Source</a></li>
-                </ul>
-            </div>
-            <div class="footer-col">
-                <h4>Universidad Continental</h4>
-                <p class="small text-white mb-2">Ingeniería de Sistemas e Informática</p>
-                <p class="small text-white mb-2">Asignatura: Programación Web</p>
-                <p class="small text-white">Cusco, 2026</p>
-            </div>
-            <div class="footer-col">
-                <h4><i class="bi bi-people-fill text-success me-1"></i> Creadores</h4>
-                <ul class="creadores-lista">
-                    <li><span>Piero Edu Alcca Moron</span> <span class="badge-porcentaje">100%</span></li>
-                    <li><span>Luis Angel Dueñas Quintana</span> <span class="badge-porcentaje">100%</span></li>
-                    <li><span>Patrick Antonio Leguia Choquemamani</span> <span class="badge-porcentaje">100%</span></li>
-                    <li><span>Alexis Sebastian Rojas Lopez</span> <span class="badge-porcentaje">100%</span></li>
-                </ul>
-            </div>
-        </div>
-
-        <div class="footer-creditos">
-            <div class="footer-creadores-banner">
-                <i class="bi bi-award-fill text-success me-1"></i>
-                <strong>Creadores del Proyecto:</strong>
-                <span>Piero Edu Alcca Moron <strong>100%</strong></span> •
-                <span>Luis Angel Dueñas Quintana <strong>100%</strong></span> •
-                <span>Patrick Antonio Leguia Choquemamani <strong>100%</strong></span> •
-                <span>Alexis Sebastian Rojas Lopez <strong>100%</strong></span>
-            </div>
-            <p class="mb-0 text-white">© 2026 VoluntMatch Cusco. Desarrollado por el Grupo 6. Universidad Continental. Licencia MIT.</p>
-        </div>
-    </footer>
-
-    <!-- Bootstrap 5 JS Bundle -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-    <!-- Scripts -->
-    <script src="{{ asset('js/main.js') }}"></script>
-    <script src="{{ asset('js/validaciones.js') }}"></script>
-</body>
-</html>
+            Swal.fire({
+                title: 'Atención',
+                html: msg,
+                icon: 'warning',
+                background: '#0f172a',
+                color: '#fff',
+                confirmButtonColor: '#f59e0b'
+            });
+        });
+    }
+</script>
+@endsection
