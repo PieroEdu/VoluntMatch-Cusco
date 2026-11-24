@@ -1,11 +1,11 @@
 -- phpMyAdmin SQL Dump
--- version 5.2.1
+-- version 5.2.3
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 17-11-2026 a las 17:12:21
--- Versión del servidor: 10.4.32-MariaDB
--- Versión de PHP: 8.2.12
+-- Tiempo de generación: 24-11-2026 a las 04:27:30
+-- Versión del servidor: 10.11.16-MariaDB
+-- Versión de PHP: 8.3.36
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -42,7 +42,9 @@ CREATE TABLE `admin_logs` (
 
 INSERT INTO `admin_logs` (`id`, `admin_nombre`, `modulo`, `detalle`, `created_at`, `updated_at`) VALUES
 (1, 'Coordinación Proyección Social UC', 'Soporte / Consultas', 'Respondió consulta #1 de LUIS (quintana@gmail.com)', '2026-11-16 21:11:04', '2026-11-16 21:11:04'),
-(2, 'Coordinación Proyección Social UC', 'Verificación ONG', 'Cambió estado institucional de \'luisong234\' a Aprobado', '2026-11-17 10:44:24', '2026-11-17 10:44:24');
+(2, 'Coordinación Proyección Social UC', 'Verificación ONG', 'Cambió estado institucional de \'luisong234\' a Aprobado', '2026-11-17 10:44:24', '2026-11-17 10:44:24'),
+(3, 'Coordinación Proyección Social UC', 'Exportación Oficial', 'Descargó padrón consolidado de horas en formato Excel/CSV', '2026-11-17 21:45:14', '2026-11-17 21:45:14'),
+(4, 'Coordinación Proyección Social UC', 'Soporte Chat', 'Envió respuesta directa en chat a LUIS (quintana@gmail.com)', '2026-11-18 01:32:10', '2026-11-18 01:32:10');
 
 -- --------------------------------------------------------
 
@@ -117,7 +119,8 @@ CREATE TABLE `consultas_contacto` (
 --
 
 INSERT INTO `consultas_contacto` (`id`, `user_id`, `rol_remitente`, `nombre`, `correo`, `asunto`, `mensaje`, `respuesta_admin`, `estado`, `respondido_at`, `created_at`, `updated_at`) VALUES
-(1, 2, 'Voluntario', 'LUIS', 'quintana@gmail.com', 'Acreditación de Horas y Certificados QR', 'quiero saber como estas admin?', 'gracias por comunicarte', 'Respondida', '2026-11-16 21:11:04', '2026-11-16 21:10:29', '2026-11-16 21:11:04');
+(1, 2, 'Voluntario', 'LUIS', 'quintana@gmail.com', 'Acreditación de Horas y Certificados QR', 'quiero saber como estas admin?', 'gracias por comunicarte', 'Respondida', '2026-11-16 21:11:04', '2026-11-16 21:10:29', '2026-11-16 21:11:04'),
+(2, 2, 'Voluntario', 'LUIS', 'quintana@gmail.com', 'Soporte Técnico de Cuenta o Expediente', 'como se registra una ong', 'Estimados estudiantes y ONGs aliadas de Cusco: les recordamos verificar sus asistencias y certificados QR antes del cierre de ciclo de Proyección Social. Coordinación Institucional UC.', 'Respondida', '2026-11-18 01:32:10', '2026-11-18 01:30:43', '2026-11-18 01:32:10');
 
 -- --------------------------------------------------------
 
@@ -278,7 +281,8 @@ INSERT INTO `notificaciones` (`id`, `user_id`, `tipo`, `titulo`, `mensaje`, `pos
 (2, 2, 'avance', 'Nuevas horas registradas (+7 hrs)', 'luisong23 registró +7 hrs por \"rwer\" en Campaña de Prevención de Incendios Forestales y Protección de Laderas en Cusco. Acumulas 7/5 hrs.', 1, 1, '2026-11-16 03:56:32', '2026-11-16 03:57:11'),
 (3, 2, 'certificado', '🎉 ¡Felicitaciones! Certificado Oficial Emitido', 'La organización luisong23 ha validado tus 7 horas en \"Campaña de Prevención de Incendios Forestales y Protección de Laderas en Cusco\" y emitió tu Certificado Oficial (VM-CUSCO-2026-0001).', 1, 1, '2026-11-16 03:56:40', '2026-11-16 03:57:11'),
 (4, 1, 'donacion', '¡Nueva Donación Solidaria Recibida!', 'LUIS registró un aporte de S/ 5.00 vía Plin (Op: 12121212) para la campaña \"Campaña de Prevención de Incendios Forestales y Protección de Laderas en Cusco\". Voucher: VCH-CUSCO-2026-BY5JXI.', NULL, 0, '2026-11-16 09:29:32', '2026-11-16 09:29:32'),
-(5, 2, 'respuesta_admin', 'Respuesta de Coordinación: Acreditación de Horas y Certificados QR', 'gracias por comunicarte', NULL, 0, '2026-11-16 21:11:04', '2026-11-16 21:11:04');
+(5, 2, 'respuesta_admin', 'Respuesta de Coordinación: Acreditación de Horas y Certificados QR', 'gracias por comunicarte', NULL, 0, '2026-11-16 21:11:04', '2026-11-16 21:11:04'),
+(6, 2, 'respuesta_admin', 'Nuevo mensaje de Coordinación UC', 'Estimados estudiantes y ONGs aliadas de Cusco: les recordamos verificar sus asistencias y certificados QR antes del cierre de ciclo de Proyección Social. Coordinación Institucional UC.', NULL, 0, '2026-11-18 01:32:10', '2026-11-18 01:32:10');
 
 -- --------------------------------------------------------
 
@@ -449,6 +453,15 @@ CREATE TABLE `roles` (
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+--
+-- Volcado de datos para la tabla `roles`
+--
+
+INSERT INTO `roles` (`id`, `name`, `guard_name`, `created_at`, `updated_at`) VALUES
+(1, 'Voluntario', 'web', '2026-11-24 08:14:46', '2026-11-24 08:14:46'),
+(2, 'Organizacion', 'web', '2026-11-24 08:14:47', '2026-11-24 08:14:47'),
+(3, 'Admin', 'web', '2026-11-24 08:14:47', '2026-11-24 08:14:47');
+
 -- --------------------------------------------------------
 
 --
@@ -480,8 +493,8 @@ CREATE TABLE `sessions` (
 --
 
 INSERT INTO `sessions` (`id`, `user_id`, `ip_address`, `user_agent`, `payload`, `last_activity`) VALUES
-('s0Pv5slL469TLyT6m8GD1bCmYB4KJjzK01AQuN0y', NULL, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Safari/537.36', 'eyJfdG9rZW4iOiJzWmo1UlFxYVFsQ1N0MVluNlBCbUxxUXhYc2lNT1hwSTJ6alg5OEIwIiwiX3ByZXZpb3VzIjp7InVybCI6Imh0dHA6XC9cLzEyNy4wLjAuMTo4MDAwXC9jb250YWN0byIsInJvdXRlIjoiY29udGFjdG8ifSwiX2ZsYXNoIjp7Im9sZCI6W10sIm5ldyI6W119fQ==', 1794926146),
-('w9EHZtlO0vN8gYuaMzO5utwZQTAuePF9XF1Y0xfD', 2, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Safari/537.36', 'eyJfdG9rZW4iOiJ6QTM2OGlZNVJYaDdobE5GTjBFMENQWmlTVG5sUGxBWWJzRE9TaE1yIiwiX2ZsYXNoIjp7Im9sZCI6W10sIm5ldyI6W119LCJfcHJldmlvdXMiOnsidXJsIjoiaHR0cDpcL1wvMTI3LjAuMC4xOjgwMDBcL2hvbWUiLCJyb3V0ZSI6ImhvbWUifSwibG9naW5fd2ViXzU5YmEzNmFkZGMyYjJmOTQwMTU4MGYwMTRjN2Y1OGVhNGUzMDk4OWQiOjIsInBhc3N3b3JkX2hhc2hfd2ViIjoiZjRiMTEwOWMyODI2NTNjNWRiNTY1MTY4NGMwOWE1ZWRhYzJhOWY0NjQxZTZlZWRmY2UyZmI5OTZlYzVkZWEwNSJ9', 1794901447);
+('HztqzIARH4ckmQ46vqKIVZy0W1cl6ngpJQV3SrRt', 2, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Safari/537.36', 'eyJfdG9rZW4iOiJuV1ZnTlA4dkZJMHJ3UmhzUVRmQ08wek5MUXJhc253RmNXYkwzWDlkIiwiX2ZsYXNoIjp7Im9sZCI6W10sIm5ldyI6W119LCJfcHJldmlvdXMiOnsidXJsIjoiaHR0cDpcL1wvMTI3LjAuMC4xOjgwMDBcL2hvbWUiLCJyb3V0ZSI6ImhvbWUifSwibG9naW5fd2ViXzU5YmEzNmFkZGMyYjJmOTQwMTU4MGYwMTRjN2Y1OGVhNGUzMDk4OWQiOjIsInBhc3N3b3JkX2hhc2hfd2ViIjoiZjRiMTEwOWMyODI2NTNjNWRiNTY1MTY4NGMwOWE1ZWRhYzJhOWY0NjQxZTZlZWRmY2UyZmI5OTZlYzVkZWEwNSJ9', 1794947545),
+('vUqLpR4jOKV8TQcn6fFHFdPd9rmxZRBdzEQ9E8Io', 3, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Safari/537.36', 'eyJfdG9rZW4iOiJuREQ1RDhST3M2M0Q2eTB1YnpJSkU4T0VEYzlkcndNSkpsSEZHOWF4IiwiX2ZsYXNoIjp7Im9sZCI6W10sIm5ldyI6W119LCJfcHJldmlvdXMiOnsidXJsIjoiaHR0cDpcL1wvMTI3LjAuMC4xOjgwMDBcL2hvbWUiLCJyb3V0ZSI6ImhvbWUifSwibG9naW5fd2ViXzU5YmEzNmFkZGMyYjJmOTQwMTU4MGYwMTRjN2Y1OGVhNGUzMDk4OWQiOjMsInBhc3N3b3JkX2hhc2hfd2ViIjoiMjE1OTI1NWMxNDAzZmFjMjk1YmU5M2MyMjY1MDViMWY0ZDdjOTEzNWNiNGM3ZDQ3NzkzZTZhMjJkNTljMjJiMiJ9', 1795490292);
 
 -- --------------------------------------------------------
 
@@ -516,7 +529,7 @@ CREATE TABLE `users` (
 INSERT INTO `users` (`id`, `name`, `email`, `email_verified_at`, `password`, `tipo_usuario`, `dni`, `telefono`, `carrera`, `disponibilidad`, `ruc`, `distrito`, `mision`, `remember_token`, `created_at`, `updated_at`, `estado_verificacion`) VALUES
 (1, 'luisong23', 'luisong23@gmail.com', NULL, '$2y$12$GYi70oFJfM/pNqocv3FmeOr1ER96bvUv5iKlxmUkC438BeRsehTzW', 'organizacion', NULL, NULL, NULL, NULL, '20225225522', 'Wanchaq', NULL, NULL, '2026-11-15 10:08:49', '2026-11-15 10:08:49', 'Aprobado'),
 (2, 'LUIS', 'quintana@gmail.com', NULL, '$2y$12$cjNDsZ8W0YKb4vkDQkxCIevR/c214dVyREOYk00BKQsW1XBLkS5.C', 'estudiante', '73203633', NULL, 'Ingeniería Ambiental', NULL, NULL, 'Cusco Centro', NULL, NULL, '2026-11-16 03:54:11', '2026-11-16 03:54:11', 'Aprobado'),
-(3, 'Coordinación Proyección Social UC', 'admin@voluntmatch.edu.pe', NULL, '$2y$12$pU2irP8KyeY7g2K8M7jIAeOEeTK8E2YvXhGRmDLwOppNMDZ42rYcK', 'estudiante', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2026-11-16 07:10:28', '2026-11-17 12:32:45', 'Aprobado'),
+(3, 'Coordinación Proyección Social UC', 'admin@voluntmatch.edu.pe', NULL, '$2y$12$84AEXIqt6P9/CsK92.awoOhp983wYIHygHY/P.hK6.wjzfRjuSxMO', 'admin', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2026-11-16 07:10:28', '2026-11-24 08:16:21', 'Aprobado'),
 (4, 'luisong234', 'luisong234@gmail.com', NULL, '$2y$12$Xxw5nW52IajUWsSumKSzceHFUhvOp/n1CQwQXhh8lCkw84yg/CUBS', 'organizacion', NULL, '957500231', NULL, NULL, '20121222121', 'San Jerónimo', 'dsadsadasdad', NULL, '2026-11-16 19:33:23', '2026-11-17 10:44:24', 'Aprobado');
 
 --
@@ -689,7 +702,7 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT de la tabla `admin_logs`
 --
 ALTER TABLE `admin_logs`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT de la tabla `asistencias`
@@ -701,7 +714,7 @@ ALTER TABLE `asistencias`
 -- AUTO_INCREMENT de la tabla `consultas_contacto`
 --
 ALTER TABLE `consultas_contacto`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT de la tabla `donaciones`
@@ -731,7 +744,7 @@ ALTER TABLE `migrations`
 -- AUTO_INCREMENT de la tabla `notificaciones`
 --
 ALTER TABLE `notificaciones`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT de la tabla `oportunidades`
@@ -773,7 +786,7 @@ ALTER TABLE `rendiciones_gasto`
 -- AUTO_INCREMENT de la tabla `roles`
 --
 ALTER TABLE `roles`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT de la tabla `users`
