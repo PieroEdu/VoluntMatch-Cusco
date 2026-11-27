@@ -1,13 +1,24 @@
 kind: wasmer.io/App.v0
 name: voluntmatch-cusco
-owner: pieroedu
+owner: "70959838"
 package: .
 
 locality:
   regions:
-    - us-east
+    - fr-roub1
+
+capabilities:
+  database:
+    engine: mysql
+
+volumes:
+  - name: voluntmatch-storage
+    mount: /app/storage/app/public
 
 env:
   APP_ENV: production
   APP_DEBUG: "false"
+  APP_KEY: "base64:/6rGeEBWLbjV1YKnkjyo6/GWpevJDJgNIJsipdb7hEI="
   LOG_CHANNEL: errorlog
+  DB_CONNECTION: mysql
+app_id: da_Ra7IetdUoVlO
