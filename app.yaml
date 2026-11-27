@@ -1,0 +1,13 @@
+kind: wasmer.io/App.v0
+name: voluntmatch-cusco
+owner: pieroedu
+package: .
+
+locality:
+  regions:
+    - us-east
+
+env:
+  APP_ENV: production
+  APP_DEBUG: "false"
+  LOG_CHANNEL: errorlog
